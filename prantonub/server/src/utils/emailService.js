@@ -10,6 +10,11 @@ const sendOtpEmail = async (toEmail, otp) => {
     );
   }
 
+  // BREVO_SENDER_EMAIL should be a real email address (e.g., noreply@financehub.com)
+  // If not provided, generate a placeholder for development
+  const senderEmail =
+    process.env.BREVO_SENDER_EMAIL || "noreply@financehub.com";
+
   const transporter = nodemailer.createTransport({
     host: "smtp-relay.brevo.com",
     port: 587,
@@ -28,7 +33,7 @@ const sendOtpEmail = async (toEmail, otp) => {
   // The old code { error } was always undefined — real failures were silently swallowed.
   try {
     const info = await transporter.sendMail({
-      from: `"FinanceHub" <${process.env.BREVO_USER}>`,
+      from: `"FinanceHub" <${senderEmail}>`,
       to: toEmail,
       subject: "Your FinanceHub Verification Code",
       html: `
@@ -76,8 +81,21 @@ const sendOtpEmail = async (toEmail, otp) => {
       "| Message ID:",
       info.messageId,
     );
+    return info;
   } catch (err) {
     console.error("❌ Brevo email error:", err.message);
+
+    // In development, log the error but still allow registration to continue
+    if (process.env.NODE_ENV === "development") {
+      console.warn(
+        "⚠️ WARNING: Email not sent in development mode. User still registered.",
+      );
+      console.warn(
+        "To fix: Ensure BREVO_USER, BREVO_PASS, and BREVO_SENDER_EMAIL are set in .env",
+      );
+      return { messageId: "dev-mode", warning: err.message };
+    }
+
     throw new Error(err.message || "Failed to send verification email");
   }
 };

@@ -46,12 +46,14 @@ const register = asyncHandler(async (req, res) => {
 
   if (existingUser) {
     // Exists but not verified — update and resend
+    console.log(`📝 Updating unverified user: ${sanitizedEmail}`);
     existingUser.name = sanitizedName;
     existingUser.passwordHash = passwordHash;
     existingUser.otp = otp;
     existingUser.otpExpiry = otpExpiry;
     await existingUser.save();
   } else {
+    console.log(`📝 Creating new user: ${sanitizedEmail}`);
     await User.create({
       name: sanitizedName,
       email: sanitizedEmail,
@@ -62,7 +64,26 @@ const register = asyncHandler(async (req, res) => {
     });
   }
 
-  await sendOtpEmail(sanitizedEmail, otp);
+  console.log(`🔐 Generated OTP for ${sanitizedEmail}: ${otp}`);
+  console.log(`📧 Sending OTP email to: ${sanitizedEmail}`);
+
+  try {
+    await sendOtpEmail(sanitizedEmail, otp);
+    console.log(`✅ OTP email sent successfully to: ${sanitizedEmail}`);
+  } catch (emailErr) {
+    console.error(
+      `❌ Email sending failed for ${sanitizedEmail}:`,
+      emailErr.message,
+    );
+    // In development, still allow registration to continue for testing
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(
+        `⚠️ Continuing registration without email (development mode)`,
+      );
+    } else {
+      throw emailErr;
+    }
+  }
 
   res.status(200).json({
     success: true,
@@ -79,26 +100,49 @@ const verifyEmail = asyncHandler(async (req, res) => {
   if (!email || !otp) throw new AppError("Email and OTP are required", 400);
 
   const sanitizedEmail = sanitizeEmail(email);
+  console.log(`🔍 Verifying email: ${sanitizedEmail} with OTP: ${otp}`);
+
   const user = await User.findOne({ email: sanitizedEmail });
 
-  if (!user) throw new AppError("User not found", 404);
-  if (user.isVerified) throw new AppError("Email is already verified", 400);
-  if (!user.otp || !user.otpExpiry)
+  if (!user) {
+    console.error(`❌ User not found: ${sanitizedEmail}`);
+    throw new AppError("User not found", 404);
+  }
+
+  if (user.isVerified) {
+    console.warn(`⚠️ User already verified: ${sanitizedEmail}`);
+    throw new AppError("Email is already verified", 400);
+  }
+
+  if (!user.otp || !user.otpExpiry) {
+    console.error(`❌ No OTP found for: ${sanitizedEmail}`);
     throw new AppError(
       "No verification code found. Please register again.",
       400,
     );
-  if (new Date() > user.otpExpiry)
+  }
+
+  if (new Date() > user.otpExpiry) {
+    console.error(`❌ OTP expired for: ${sanitizedEmail}`);
     throw new AppError(
       "Verification code has expired. Please request a new one.",
       400,
     );
-  if (user.otp !== otp) throw new AppError("Invalid verification code", 400);
+  }
+
+  if (user.otp !== otp) {
+    console.error(
+      `❌ Invalid OTP for ${sanitizedEmail}. Expected: ${user.otp}, Got: ${otp}`,
+    );
+    throw new AppError("Invalid verification code", 400);
+  }
 
   user.isVerified = true;
   user.otp = null;
   user.otpExpiry = null;
   await user.save();
+
+  console.log(`✅ Email verified successfully: ${sanitizedEmail}`);
 
   res.json({
     success: true,
@@ -117,17 +161,45 @@ const resendOtp = asyncHandler(async (req, res) => {
   if (!email) throw new AppError("Email is required", 400);
 
   const sanitizedEmail = sanitizeEmail(email);
+  console.log(`🔄 Resending OTP for: ${sanitizedEmail}`);
+
   const user = await User.findOne({ email: sanitizedEmail });
 
-  if (!user) throw new AppError("User not found", 404);
-  if (user.isVerified) throw new AppError("Email is already verified", 400);
+  if (!user) {
+    console.error(`❌ User not found for resend: ${sanitizedEmail}`);
+    throw new AppError("User not found", 404);
+  }
+
+  if (user.isVerified) {
+    console.warn(
+      `⚠️ User already verified, cannot resend OTP: ${sanitizedEmail}`,
+    );
+    throw new AppError("Email is already verified", 400);
+  }
 
   const otp = generateOtp();
   user.otp = otp;
   user.otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
   await user.save();
 
-  await sendOtpEmail(sanitizedEmail, otp);
+  console.log(`🔐 Generated new OTP for ${sanitizedEmail}: ${otp}`);
+  console.log(`📧 Sending OTP email to: ${sanitizedEmail}`);
+
+  try {
+    await sendOtpEmail(sanitizedEmail, otp);
+    console.log(`✅ OTP email resent successfully to: ${sanitizedEmail}`);
+  } catch (emailErr) {
+    console.error(
+      `❌ Email resend failed for ${sanitizedEmail}:`,
+      emailErr.message,
+    );
+    // In development, still allow to continue for testing
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(`⚠️ Continuing without email (development mode)`);
+    } else {
+      throw emailErr;
+    }
+  }
 
   res.json({
     success: true,

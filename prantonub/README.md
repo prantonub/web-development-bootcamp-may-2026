@@ -180,9 +180,12 @@
 
 ## 🔑 Environment Variables
 
+Create `server/.env` with the following:
+
 ```env
 # Server
 PORT=5000
+NODE_ENV=development
 
 # Database
 MONGO_URI=mongodb://localhost:27017/financehub
@@ -194,10 +197,44 @@ SESSION_SECRET=your_session_secret
 # Frontend URL
 CLIENT_URL=http://localhost:5173
 
+# Email Verification (Brevo SMTP) — REQUIRED FOR REGISTRATION
+BREVO_USER=your_brevo_relay_email@smtp-brevo.com
+BREVO_PASS=your_brevo_smtp_password
+BREVO_SENDER_EMAIL=noreply@yourdomain.com
+
 # Google OAuth (optional)
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# AI Chatbot (Groq API)
+GROQ_API_KEY=your_groq_api_key
 ```
+
+**See `server/.env.example` for detailed documentation.**
+
+<br/>
+
+---
+
+<div align="left">
+
+## 📧 Email Verification Setup (Brevo)
+
+Email verification is **REQUIRED** for user registration.
+
+| Step | Action |
+|:---:|---|
+| 1 | Go to [Brevo](https://www.brevo.com) and create a free account |
+| 2 | Log in → **Settings** → **SMTP & API** |
+| 3 | Find **SMTP relay credentials**: |
+| | • `BREVO_USER`: Relay email (e.g., `abc123@smtp-brevo.com`) |
+| | • `BREVO_PASS`: Relay password (very long string) |
+| 4 | Set `BREVO_SENDER_EMAIL` to your email or domain email |
+| 5 | Add to `server/.env` and restart server |
+
+> 💡 **Having issues?** See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) for help
+
+</div>
 
 <br/>
 
