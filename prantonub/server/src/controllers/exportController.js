@@ -8,6 +8,8 @@ const Transaction = require("../models/Transaction");
 // ─────────────────────────────────────────────────────────────────────────────
 const exportCSV = async (req, res) => {
   try {
+    console.log(`📊 CSV export requested by user: ${req.user._id}`);
+
     const { startDate, endDate, type, category } = req.query;
     const filter = { user: req.user._id };
     if (type && type !== "All") filter.type = type;
@@ -23,6 +25,7 @@ const exportCSV = async (req, res) => {
     }
 
     const transactions = await Transaction.find(filter).sort("-date");
+    console.log(`📋 Exporting ${transactions.length} transactions to CSV`);
 
     const headers = ["Date", "Title", "Category", "Type", "Amount", "Note"];
     const rows = transactions.map((t) => [
@@ -41,8 +44,15 @@ const exportCSV = async (req, res) => {
       "Content-Disposition",
       `attachment; filename="FinanceHub-export-${Date.now()}.csv"`,
     );
+    console.log(
+      `✅ CSV export generated successfully for user: ${req.user._id}`,
+    );
     res.send(csv);
   } catch (err) {
+    console.error(
+      `❌ CSV export failed for user ${req.user._id}:`,
+      err.message,
+    );
     res.status(500).json({ success: false, error: err.message });
   }
 };
@@ -53,9 +63,13 @@ const exportCSV = async (req, res) => {
 // ─────────────────────────────────────────────────────────────────────────────
 const exportSummary = async (req, res) => {
   try {
+    console.log(`📄 Generating report for user: ${req.user._id}`);
+
     const now = new Date();
     const month = Number(req.query.month) || now.getMonth() + 1;
     const year = Number(req.query.year) || now.getFullYear();
+
+    console.log(`📅 Report period: ${month}/${year}`);
 
     const start = new Date(year, month - 1, 1, 0, 0, 0, 0);
     const end = new Date(year, month, 0, 23, 59, 59, 999);
@@ -64,6 +78,8 @@ const exportSummary = async (req, res) => {
       user: req.user._id,
       date: { $gte: start, $lte: end },
     }).sort("-date");
+
+    console.log(`📊 Found ${transactions.length} transactions`);
 
     const totalIncome = transactions
       .filter((t) => t.type === "income")
@@ -318,8 +334,13 @@ const exportSummary = async (req, res) => {
 </html>`;
 
     res.setHeader("Content-Type", "text/html");
+    console.log(`✅ Report generated successfully for user: ${req.user._id}`);
     res.send(html);
   } catch (err) {
+    console.error(
+      `❌ Report generation failed for user ${req.user._id}:`,
+      err.message,
+    );
     res.status(500).json({ success: false, error: err.message });
   }
 };

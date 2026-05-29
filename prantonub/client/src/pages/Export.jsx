@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
 
 const MONTHS = [
@@ -19,29 +20,61 @@ const MONTHS = [
 const BACKEND_URL = "https://financehub-personal-expence-tracker.onrender.com";
 
 export default function Export() {
+  const { user } = useAuth();
   const now = new Date();
 
   const [reportMonth, setReportMonth] = useState(now.getMonth() + 1);
   const [reportYear, setReportYear] = useState(now.getFullYear());
   const [reportLoading, setReportLoading] = useState(false);
+  const [error, setError] = useState("");
 
   // Opens report in new tab — the report page has a "Download PDF" button
   // that uses html2pdf.js to download directly without any browser dialog
   const handleExportReport = () => {
+    setError("");
+
+    // Validate user is logged in
+    if (!user) {
+      setError("You must be logged in to generate reports");
+      return;
+    }
+
+    // Get token
+    const token = localStorage.getItem("sw_token");
+    if (!token) {
+      setError("Authentication token not found. Please log in again.");
+      return;
+    }
+
     setReportLoading(true);
     try {
-      const token = localStorage.getItem("sw_token");
       const url = `${BACKEND_URL}/api/export/summary?month=${reportMonth}&year=${reportYear}&token=${token}`;
-      window.open(url, "_blank");
+      console.log("📄 Opening report URL:", url);
+
+      const newWindow = window.open(url, "_blank");
+      if (
+        !newWindow ||
+        newWindow.closed ||
+        typeof newWindow.closed == "undefined"
+      ) {
+        setError("Pop-up window blocked. Please allow pop-ups for this site.");
+      }
     } catch (err) {
-      alert("Failed to generate report. Please try again.");
-      console.error(err);
+      setError("Failed to generate report. Please try again.");
+      console.error("❌ Report error:", err);
     } finally {
       setReportLoading(false);
     }
   };
 
   const handleExportCSV = async () => {
+    setError("");
+
+    if (!user) {
+      setError("You must be logged in to export data");
+      return;
+    }
+
     try {
       const response = await api.get("/export/csv", { responseType: "blob" });
       const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -56,8 +89,8 @@ export default function Export() {
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (err) {
-      alert("CSV export failed. Please try again.");
-      console.error(err);
+      setError("CSV export failed. Please try again.");
+      console.error("❌ CSV error:", err);
     }
   };
 
@@ -72,6 +105,13 @@ export default function Export() {
         <h1 className="page-title">Export & Reports</h1>
         <p className="page-sub">Download and export your financial data</p>
       </div>
+
+      {/* Error message */}
+      {error && (
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm px-4 py-3 rounded-xl">
+          ❌ {error}
+        </div>
+      )}
 
       {/* PDF Report card */}
       <div className="card p-6">
