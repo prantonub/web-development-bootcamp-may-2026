@@ -25,8 +25,19 @@ api.interceptors.response.use(
   (error) => {
     const { response } = error;
 
+    // Login / register / OTP endpoints return 401 or 403 for ordinary input
+    // errors (wrong password, unverified email, ...). Those must reach the form
+    // so it can show the real message — only a genuine session expiry on an
+    // authenticated request should force a logout.
+    const isAuthCall = [
+      "/auth/login",
+      "/auth/register",
+      "/auth/verify-email",
+      "/auth/resend-otp",
+    ].some((path) => error.config?.url?.includes(path));
+
     // Handle 401 - token expired or invalid
-    if (response?.status === 401) {
+    if (response?.status === 401 && !isAuthCall) {
       localStorage.removeItem("sw_token");
       localStorage.removeItem("sw_user");
       window.location.href = "/login?error=session_expired";
@@ -38,7 +49,7 @@ api.interceptors.response.use(
     }
 
     // Handle 403 - forbidden/account deactivated
-    if (response?.status === 403) {
+    if (response?.status === 403 && !isAuthCall) {
       localStorage.removeItem("sw_token");
       localStorage.removeItem("sw_user");
       window.location.href = "/login?error=account_deactivated";
