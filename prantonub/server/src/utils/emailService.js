@@ -7,7 +7,8 @@
 //     Resend account (until you verify your own domain at resend.com/domains
 //     and switch RESEND_FROM_EMAIL to e.g. "FinanceHub <noreply@yourdomain.com>").
 
-const { Resend } = require("resend");
+// The "resend" SDK is required lazily inside sendOtpEmail() so that a packaging
+// or dependency problem can never crash the whole API while it boots.
 
 const DEFAULT_FROM = "FinanceHub <onboarding@resend.dev>";
 
@@ -64,6 +65,7 @@ const sendOtpEmail = async (toEmail, otp) => {
     );
   }
 
+  const { Resend } = require("resend");
   const resend = new Resend(apiKey);
   const from = process.env.RESEND_FROM_EMAIL || DEFAULT_FROM;
 

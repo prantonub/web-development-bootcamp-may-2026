@@ -3,8 +3,25 @@
 
 const Groq = require("groq-sdk");
 
-// Initialize Groq client — API key stays on server only
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+// ⚠️ Do NOT construct the Groq client at module scope.
+// groq-sdk THROWS when GROQ_API_KEY is missing/undefined, and this module is
+// loaded while the server boots — so a missing key would crash the entire API
+// before it ever binds a port, which Render reports as "Deploy failed".
+// Build the client lazily on the first AI request instead (then cache it), so
+// the API always boots and only the AI endpoint reports the missing key.
+let groqClient = null;
+
+const getGroqClient = () => {
+  if (!process.env.GROQ_API_KEY) {
+    throw new Error(
+      "AI chat is not configured on the server. Set GROQ_API_KEY (get a free key at https://console.groq.com/keys).",
+    );
+  }
+  if (!groqClient) {
+    groqClient = new Groq({ apiKey: process.env.GROQ_API_KEY });
+  }
+  return groqClient;
+};
 
 /**
  * Build a structured financial summary from the user's transactions.
@@ -131,7 +148,7 @@ ${financialContext}
     { role: "user", content: userMessage },
   ];
 
-  const response = await groq.chat.completions.create({
+  const response = await getGroqClient().chat.completions.create({
     model: "llama-3.3-70b-versatile", // free, fast, very capable
     messages,
     max_tokens: 1024,

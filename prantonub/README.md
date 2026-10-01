@@ -242,6 +242,51 @@ Email verification is **REQUIRED** for user registration.
 
 <div align="left">
 
+## 🚀 Deploy Troubleshooting (Render)
+
+> **If Render says "Deploy failed", verify these settings — they are the usual cause.**
+
+| Setting | Required value |
+|:---:|---|
+| **Root Directory** | `prantonub/server` — the repo root has **no** `package.json` |
+| **Build Command** | `npm install` (or `npm ci`) |
+| **Start Command** | `npm start` |
+| **Health Check Path** | `/health` (aliases: `/`, `/healthz`, `/api/health`) |
+| **Node Version** | 20 (from `engines` in `server/package.json`) |
+
+Environment variables (Render → **Environment**) — `.env` is git-ignored, so
+**every** value below must be set in the dashboard:
+
+```env
+MONGO_URI=mongodb+srv://user:pass@cluster0.xxx.mongodb.net/financehub?retryWrites=true&w=majority
+JWT_SECRET=...
+SESSION_SECRET=...
+CLIENT_URL=https://financehub-prantonub.vercel.app
+SERVER_URL=https://your-app.onrender.com
+RESEND_API_KEY=re_...
+RESEND_FROM_EMAIL=FinanceHub <onboarding@resend.dev>
+GROQ_API_KEY=...
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+```
+
+| Symptom | Cause / fix |
+|---|---|
+| `Deploy failed: no open ports detected` | Was caused by the server only binding its port **after** MongoDB connected. Fixed: the port now opens immediately and Mongo is retried every 10s. |
+| `Deploy failed` + `Health check failed` | Fixed: `/health`, `/healthz` and `/api/health` always return **200**. |
+| Logs show `❌ MongoDB URI is missing` | `MONGO_URI` is not set in the Render dashboard — add it (the password must **not** keep Atlas's `< >` brackets). |
+| Logs show `MongoServerError: bad auth` | Wrong password, or `< >` left around it. |
+| `/health` returns `"database": "connecting"` | Atlas **Network Access** is blocking Render — allow `0.0.0.0/0` (or Render's static egress IPs). |
+| Build fails: `Could not read package.json` | **Root Directory** is wrong — set it to `prantonub/server`. |
+
+</div>
+
+<br/>
+
+---
+
+<div align="left">
+
 ## 🔐 Google OAuth Setup
 
 | Step | Action |

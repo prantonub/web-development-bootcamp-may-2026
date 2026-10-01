@@ -66,9 +66,26 @@ app.use("/api/user", require("./src/routes/user"));
 app.use("/api/export", require("./src/routes/export"));
 app.use("/api/ai", require("./src/routes/ai"));
 
-// Health check endpoint
+// Root + health check endpoints
+// IMPORTANT: Render probes a health path while deploying. These routes must
+// answer 200 even when the database is not connected yet, otherwise a slow or
+// unreachable database turns a successful build into a failed deploy.
+const healthPayload = () => ({
+  success: true,
+  status: "ok",
+  service: "SpendWise API v2",
+  database:
+    mongoose.connection.readyState === 1 ? "connected" : "connecting",
+  uptime: Math.round(process.uptime()),
+  timestamp: new Date().toISOString(),
+});
+
 app.get("/", (_req, res) =>
   res.json({ success: true, message: "SpendWise API v2 🚀" }),
+);
+
+app.get(["/health", "/healthz", "/api/health"], (_req, res) =>
+  res.json(healthPayload()),
 );
 
 // 404 handler
@@ -88,9 +105,8 @@ const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI;
 
 if (!MONGO_URI) {
   console.error(
-    "❌ MongoDB URI is missing. Add MONGO_URI to server/.env (see server/.env.example).",
+    "❌ MongoDB URI is missing. Set MONGO_URI in your environment (see server/.env.example).",
   );
-  process.exit(1);
 }
 
 const connectDB = async () => {
@@ -115,13 +131,30 @@ const connectDB = async () => {
   }
 };
 
-connectDB()
-  .then(() => {
+// IMPORTANT: bind the port BEFORE — and independently of — the database.
+// Render marks a deploy as failed when no port opens in time or when the
+// process exits, so a database problem must never stop the API from starting.
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`🚀 Server → http://localhost:${PORT}`));
+
+const RETRY_DELAY_MS = 10000;
+
+const connectWithRetry = async (attempt = 1) => {
+  if (!MONGO_URI) return;
+
+  try {
+    await connectDB();
     console.log("✅ MongoDB connected");
-    const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => console.log(`🚀 Server → http://localhost:${PORT}`));
-  })
-  .catch((err) => {
-    console.error("❌ MongoDB failed:", err.message);
-    process.exit(1);
-  });
+  } catch (err) {
+    console.error(
+      `❌ MongoDB connection attempt ${attempt} failed:`,
+      err.message,
+    );
+    console.warn(
+      `⚠️ API still listening on port ${PORT} — retrying in ${RETRY_DELAY_MS / 1000}s.`,
+    );
+    setTimeout(() => connectWithRetry(attempt + 1), RETRY_DELAY_MS);
+  }
+};
+
+connectWithRetry();
