@@ -58,7 +58,7 @@ export default function Settings() {
     } catch (err) {
       setProfileMsg({
         type: "error",
-        msg: err.response?.data?.error || "Update failed",
+        msg: err.response?.data?.error || err.message || "Update failed",
       });
     } finally {
       setProfileLoading(false);
@@ -81,7 +81,7 @@ export default function Settings() {
       setPwMsg({ type: "success", msg: "Password changed successfully!" });
       setPw({ currentPassword: "", newPassword: "", confirmPassword: "" });
     } catch (err) {
-      setPwMsg({ type: "error", msg: err.response?.data?.error || "Failed" });
+      setPwMsg({ type: "error", msg: err.response?.data?.error || err.message || "Failed" });
     } finally {
       setPwLoading(false);
     }
@@ -93,7 +93,7 @@ export default function Settings() {
       logout();
       navigate("/login");
     } catch (err) {
-      alert(err.response?.data?.error || "Delete failed");
+      alert(err.response?.data?.error || err.message || "Delete failed");
     }
   };
 

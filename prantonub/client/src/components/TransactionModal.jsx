@@ -25,7 +25,7 @@ export default function TransactionModal({ transaction, onClose, onSave }) {
       else await api.post("/transactions", form);
       onSave();
     } catch (err) {
-      setError(err.response?.data?.error || "Failed to save");
+      setError(err.response?.data?.error || err.message || "Failed to save");
     } finally { setLoading(false); }
   };
 

@@ -1,16 +1,23 @@
 // server/src/utils/emailService.js
-// Sends OTP verification emails with Resend (https://resend.com).
+// Provider-agnostic OTP email sender.
 //
-// Works on Render and on the Resend FREE plan with NO custom domain:
-//   • `from` must be Resend's shared test sender: onboarding@resend.dev
-//   • Resend then only allows sending to the email address that owns the
-//     Resend account (until you verify your own domain at resend.com/domains
-//     and switch RESEND_FROM_EMAIL to e.g. "FinanceHub <noreply@yourdomain.com>").
+// Two providers are supported and auto-detected, in this order:
+//
+//   1. SMTP   (SMTP_USER + SMTP_PASS)  ← use this if you do NOT own a domain.
+//      Delivers to ANY recipient with no domain required. Works with a Gmail
+//      "App Password", a Brevo SMTP relay, or any other SMTP host.
+//
+//   2. Resend (RESEND_API_KEY)
+//      The free plan WITHOUT a verified domain can only deliver to the address
+//      that owns the Resend account — registration for any other address is
+//      rejected with a 403 "can only send testing emails..." error.
+//
+// Configure whichever you have; no code changes are needed to switch.
+//
+// Both SDKs are `require`d lazily inside their senders so a packaging or
+// dependency problem can never crash the whole API while it boots.
 
-// The "resend" SDK is required lazily inside sendOtpEmail() so that a packaging
-// or dependency problem can never crash the whole API while it boots.
-
-const DEFAULT_FROM = "FinanceHub <onboarding@resend.dev>";
+const SUBJECT = "Your FinanceHub Verification Code";
 
 const buildOtpEmailHtml = (otp) => `
   <div style="font-family:'Segoe UI',sans-serif;max-width:480px;margin:40px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
@@ -50,64 +57,109 @@ const buildOtpEmailHtml = (otp) => `
   </div>
 `;
 
+/** Which provider is configured? SMTP wins because it works without a domain. */
+const getProvider = () => {
+  if (process.env.SMTP_USER && process.env.SMTP_PASS) return "smtp";
+  if (process.env.RESEND_API_KEY) return "resend";
+  return null;
+};
+
+// ── Provider 1: SMTP (Gmail App Password, Brevo relay, anything) ──────────────
+const sendViaSmtp = async (toEmail, otp) => {
+  const nodemailer = require("nodemailer");
+  const port = Number(process.env.SMTP_PORT || 465);
+
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST || "smtp.gmail.com",
+    port,
+    secure: port === 465, // 465 = implicit TLS, 587 = STARTTLS
+    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    connectionTimeout: 15000,
+    greetingTimeout: 15000,
+    socketTimeout: 15000,
+  });
+
+  // Gmail only lets you send as the authenticated account (or a verified alias),
+  // so the default From is the SMTP user itself.
+  const from =
+    process.env.SMTP_FROM || `"FinanceHub" <${process.env.SMTP_USER}>`;
+
+  const info = await transporter.sendMail({
+    from,
+    to: toEmail,
+    subject: SUBJECT,
+    html: buildOtpEmailHtml(otp),
+  });
+
+  return { id: info.messageId, provider: "smtp" };
+};
+
+// ── Provider 2: Resend ───────────────────────────────────────────────────────
+const sendViaResend = async (toEmail, otp) => {
+  const { Resend } = require("resend");
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
+  const from =
+    process.env.RESEND_FROM_EMAIL || "FinanceHub <onboarding@resend.dev>";
+
+  // NOTE: resend.emails.send() does NOT throw on API errors — it resolves with
+  // { data, error }, so `error` must be checked explicitly (unlike nodemailer).
+  const { data, error } = await resend.emails.send({
+    from,
+    to: toEmail,
+    subject: SUBJECT,
+    html: buildOtpEmailHtml(otp),
+  });
+
+  if (error) {
+    throw new Error(error.message || "Resend rejected the email");
+  }
+
+  return { id: data?.id, provider: "resend" };
+};
+
 /**
  * Send the 6-digit registration OTP.
  * @param {string} toEmail - recipient address
  * @param {string} otp     - 6-digit verification code
- * @returns {Promise<Object>} Resend response data ({ id }) or a dev-mode stub
+ * @returns {Promise<Object>} { id, provider } — or a dev-mode stub
  */
 const sendOtpEmail = async (toEmail, otp) => {
-  const apiKey = process.env.RESEND_API_KEY;
+  const provider = getProvider();
 
-  if (!apiKey) {
+  if (!provider) {
     throw new Error(
-      "Email not configured. Add RESEND_API_KEY to your environment variables (see server/.env.example).",
+      "Email is not configured. Set SMTP_USER + SMTP_PASS (works without a domain) " +
+        "or RESEND_API_KEY in your environment variables (see server/.env.example).",
     );
   }
 
-  const { Resend } = require("resend");
-  const resend = new Resend(apiKey);
-  const from = process.env.RESEND_FROM_EMAIL || DEFAULT_FROM;
-
-  // NOTE: resend.emails.send() does NOT throw on API errors — it resolves with
-  // { data, error }, so `error` must be checked explicitly (unlike nodemailer).
   try {
-    const { data, error } = await resend.emails.send({
-      from,
-      to: toEmail,
-      subject: "Your FinanceHub Verification Code",
-      html: buildOtpEmailHtml(otp),
-    });
-
-    if (error) {
-      throw new Error(error.message || "Resend rejected the email");
-    }
+    const result =
+      provider === "smtp"
+        ? await sendViaSmtp(toEmail, otp)
+        : await sendViaResend(toEmail, otp);
 
     console.log(
-      "✅ OTP email sent to:",
-      toEmail,
-      "| Message ID:",
-      data?.id,
+      `✅ OTP email sent to: ${toEmail} via ${result.provider} | id: ${result.id}`,
     );
-    return data;
+    return result;
   } catch (err) {
     let message = err?.message || "Failed to send verification email";
 
     // Friendly hint for the most common free-plan mistake
     if (/can only send testing emails/i.test(message)) {
       message +=
-        " → Resend's free plan without a verified domain can only deliver to your own Resend account email. Verify a domain at https://resend.com/domains and set RESEND_FROM_EMAIL accordingly.";
+        " → Resend's free plan without a verified domain can only deliver to the Resend account owner's own address." +
+        " Either verify a domain at https://resend.com/domains, or set SMTP_USER + SMTP_PASS to switch to Gmail/Brevo SMTP (no domain needed).";
     }
 
-    console.error("❌ Resend email error:", message);
+    console.error("❌ Email error:", message);
 
     // In development, log the error but still allow registration to continue
     if (process.env.NODE_ENV !== "production") {
       console.warn(
         "⚠️ WARNING: Email not sent in development mode. User still registered.",
-      );
-      console.warn(
-        "To fix: set RESEND_API_KEY in server/.env (get one at https://resend.com/api-keys)",
       );
       return { id: "dev-mode", warning: message };
     }

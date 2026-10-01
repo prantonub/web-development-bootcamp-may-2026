@@ -88,7 +88,9 @@ const AIChatModal = ({ onClose }) => {
       ]);
     } catch (err) {
       const errMsg =
-        err.response?.data?.error || "Something went wrong. Please try again.";
+        err.response?.data?.error ||
+        err.message ||
+        "Something went wrong. Please try again.";
       setError(errMsg);
       setMessages(messages);
     } finally {

@@ -85,7 +85,7 @@ export default function Recurring() {
       setShowModal(false);
       fetch();
     } catch (err) {
-      setError(err.response?.data?.error || "Failed to save");
+      setError(err.response?.data?.error || err.message || "Failed to save");
     } finally {
       setSaving(false);
     }

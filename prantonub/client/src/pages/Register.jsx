@@ -179,7 +179,7 @@ export default function Register() {
       });
       setStep("otp");
     } catch (err) {
-      setError(err.response?.data?.error || "Registration failed");
+      setError(err.response?.data?.error || err.message || "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -198,6 +198,7 @@ export default function Register() {
     } catch (err) {
       setOtpError(
         err.response?.data?.error ||
+          err.message ||
           "Invalid or expired code. Please try again.",
       );
       setOtp("");
@@ -215,7 +216,7 @@ export default function Register() {
       resetTimer();
       setOtp("");
     } catch (err) {
-      setOtpError(err.response?.data?.error || "Failed to resend code");
+      setOtpError(err.response?.data?.error || err.message || "Failed to resend code");
     }
   };
 

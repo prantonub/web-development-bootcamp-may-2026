@@ -81,7 +81,12 @@ const register = asyncHandler(async (req, res) => {
         `⚠️ Continuing registration without email (development mode)`,
       );
     } else {
-      throw emailErr;
+      // Return an actionable message instead of a bare 500 "Internal server error".
+      // (Cause is logged above; see server/.env.example for provider setup.)
+      throw new AppError(
+        "We could not send the verification email right now. Please try again in a moment.",
+        503,
+      );
     }
   }
 
@@ -197,7 +202,10 @@ const resendOtp = asyncHandler(async (req, res) => {
     if (process.env.NODE_ENV !== "production") {
       console.warn(`⚠️ Continuing without email (development mode)`);
     } else {
-      throw emailErr;
+      throw new AppError(
+        "We could not send the verification email right now. Please try again in a moment.",
+        503,
+      );
     }
   }
 

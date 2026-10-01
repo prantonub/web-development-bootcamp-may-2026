@@ -31,7 +31,7 @@ export default function Login() {
       const { data } = await api.post("/auth/login", form);
       login(data.token, data.user);
       navigate("/");
-    } catch (err) { setError(err.response?.data?.error || "Login failed"); }
+    } catch (err) { setError(err.response?.data?.error || err.message || "Login failed"); }
     finally { setLoading(false); }
   };
 

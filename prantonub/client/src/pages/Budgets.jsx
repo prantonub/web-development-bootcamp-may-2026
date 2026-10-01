@@ -131,7 +131,7 @@ export default function Budgets() {
       setForm({ category: "Food & Dining", amount: "" });
       fetch();
     } catch (err) {
-      setError(err.response?.data?.error || "Failed to save");
+      setError(err.response?.data?.error || err.message || "Failed to save");
     } finally {
       setSaving(false);
     }
