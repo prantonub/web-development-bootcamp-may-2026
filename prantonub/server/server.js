@@ -80,8 +80,42 @@ app.use("*", (_req, res) => {
 app.use(errorHandler);
 
 // Database connection
-mongoose
-  .connect(process.env.MONGO_URI)
+const dns = require("dns");
+
+// Both names are accepted: MONGO_URI is what this project uses (see .env.example),
+// MONGODB_URI is the common convention used by many hosts (Render, Heroku, ...).
+const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI;
+
+if (!MONGO_URI) {
+  console.error(
+    "❌ MongoDB URI is missing. Add MONGO_URI to server/.env (see server/.env.example).",
+  );
+  process.exit(1);
+}
+
+const connectDB = async () => {
+  const options = { serverSelectionTimeoutMS: 10000 };
+
+  try {
+    await mongoose.connect(MONGO_URI, options);
+  } catch (err) {
+    // A `mongodb+srv://` URI needs a DNS SRV lookup. Some local networks and ISP
+    // routers refuse it (querySrv ECONNREFUSED) even though the cluster is fine,
+    // so retry once through public resolvers. Render/Atlas DNS already works and
+    // never reaches this fallback.
+    if (/querySrv/i.test(err.message)) {
+      console.warn(
+        "⚠️ DNS SRV lookup failed — retrying with public DNS resolvers (8.8.8.8 / 1.1.1.1)...",
+      );
+      dns.setServers(["8.8.8.8", "1.1.1.1"]);
+      await mongoose.connect(MONGO_URI, options);
+    } else {
+      throw err;
+    }
+  }
+};
+
+connectDB()
   .then(() => {
     console.log("✅ MongoDB connected");
     const PORT = process.env.PORT || 5000;

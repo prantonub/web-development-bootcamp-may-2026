@@ -197,10 +197,10 @@ SESSION_SECRET=your_session_secret
 # Frontend URL
 CLIENT_URL=http://localhost:5173
 
-# Email Verification (Brevo SMTP) — REQUIRED FOR REGISTRATION
-BREVO_USER=your_brevo_relay_email@smtp-brevo.com
-BREVO_PASS=your_brevo_smtp_password
-BREVO_SENDER_EMAIL=noreply@yourdomain.com
+# Email Verification (Resend) — REQUIRED FOR REGISTRATION
+RESEND_API_KEY=re_xxxxxxxxx
+RESEND_FROM_EMAIL=FinanceHub <onboarding@resend.dev>
+# No domain? onboarding@resend.dev only mails your own Resend account email
 
 # Google OAuth (optional)
 GOOGLE_CLIENT_ID=your_google_client_id
@@ -218,19 +218,19 @@ GROQ_API_KEY=your_groq_api_key
 
 <div align="left">
 
-## 📧 Email Verification Setup (Brevo)
+## 📧 Email Verification Setup (Resend — no domain required)
 
 Email verification is **REQUIRED** for user registration.
 
 | Step | Action |
 |:---:|---|
-| 1 | Go to [Brevo](https://www.brevo.com) and create a free account |
-| 2 | Log in → **Settings** → **SMTP & API** |
-| 3 | Find **SMTP relay credentials**: |
-| | • `BREVO_USER`: Relay email (e.g., `abc123@smtp-brevo.com`) |
-| | • `BREVO_PASS`: Relay password (very long string) |
-| 4 | Set `BREVO_SENDER_EMAIL` to your email or domain email |
-| 5 | Add to `server/.env` and restart server |
+| 1 | Go to [Resend](https://resend.com) and create a free account |
+| 2 | Dashboard → **API Keys** → **Create API Key** (Sending access) |
+| 3 | Copy the key (starts with `re_`) → `RESEND_API_KEY` in `server/.env` |
+| | • **No domain?** keep `RESEND_FROM_EMAIL=FinanceHub <onboarding@resend.dev>` |
+| | • ⚠️ Then Resend only delivers to **your own Resend account email** |
+| 4 | Add the variable to `server/.env` and restart the server |
+| 5 | Later: verify a domain, then set `RESEND_FROM_EMAIL=noreply@yourdomain.com` |
 
 > 💡 **Having issues?** See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) for help
 
