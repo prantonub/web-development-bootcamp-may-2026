@@ -12,10 +12,8 @@ const userSchema = new mongoose.Schema(
     theme: { type: String, enum: ["light", "dark"], default: "light" },
     isActive: { type: Boolean, default: true },
 
-    // Email OTP verification
-    isVerified: { type: Boolean, default: false },
-    otp: { type: String, default: null },
-    otpExpiry: { type: Date, default: null },
+    // No email verification step: accounts are active as soon as they are created.
+    isVerified: { type: Boolean, default: true },
   },
   { timestamps: true },
 );
