@@ -103,10 +103,73 @@ const dns = require("dns");
 // MONGODB_URI is the common convention used by many hosts (Render, Heroku, ...).
 const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI;
 
+// Parse user/host out of the URI so the startup log shows WHAT we are dialling.
+// A wrong username, host or password then becomes obvious at a glance.
+const parseMongoUri = (uri = "") => {
+  const m = uri.match(/^mongodb(\+srv)?:\/\/([^:@/]+):([^@]*)@(.+)$/);
+  if (!m) return { user: "(unparsable)", pass: "", host: "(unparsable)", db: "" };
+  const hostAndDb = m[4].split("?")[0];
+  const slash = hostAndDb.indexOf("/");
+  return {
+    user: decodeURIComponent(m[2]),
+    pass: decodeURIComponent(m[3]),
+    host: slash === -1 ? hostAndDb : hostAndDb.slice(0, slash),
+    db: slash === -1 ? "" : hostAndDb.slice(slash + 1),
+  };
+};
+
+const mongoTarget = parseMongoUri(MONGO_URI);
+
+// Turn raw driver errors into actionable instructions instead of cryptic text.
+const describeMongoError = (err) => {
+  const msg = err.message || String(err);
+
+  if (/bad auth|authentication failed/i.test(msg)) {
+    return [
+      "MongoDB rejected the credentials (bad auth).",
+      `     → user: "${mongoTarget.user}" · password length: ${mongoTarget.pass.length} · host: "${mongoTarget.host}"`,
+      "     → If you copied the URI from Atlas, delete the < > brackets around the password.",
+      "     → Confirm the user exists in Atlas → Database Access and the password is current.",
+      "     → Percent-encode special characters in the password: @ : / ? # → %40 %3A %2F %3F %23",
+    ].join("\n");
+  }
+  if (/querySrv|ENOTFOUND|EAI_AGAIN/i.test(msg)) {
+    return [
+      `Cannot resolve "${mongoTarget.host}" (DNS).`,
+      "     → Check the cluster hostname in MONGO_URI (Atlas → Connect → Drivers).",
+    ].join("\n");
+  }
+  if (
+    /whitelist|not allowed to access|Server selection timed out|ETIMEDOUT/i.test(
+      msg,
+    )
+  ) {
+    return [
+      "Atlas refused the network connection.",
+      "     → Atlas → Network Access → allow 0.0.0.0/0 (or this host's IP).",
+    ].join("\n");
+  }
+  return msg;
+};
+
 if (!MONGO_URI) {
   console.error(
     "❌ MongoDB URI is missing. Set MONGO_URI in your environment (see server/.env.example).",
   );
+} else {
+  console.log(
+    `📡 Environment: MONGO_URI=${process.env.MONGO_URI ? "set" : "unset"} · MONGODB_URI=${process.env.MONGODB_URI ? "set" : "unset"}`,
+  );
+  console.log(
+    `📡 MongoDB target → user="${mongoTarget.user}" · host="${mongoTarget.host}" · db="${mongoTarget.db || "(default)"}"`,
+  );
+
+  // The #1 copy-paste mistake: Atlas displays the password as <password>.
+  if (/[<>]/.test(MONGO_URI)) {
+    console.error(
+      "❌ MONGO_URI contains < or > — remove the angle brackets around the password.",
+    );
+  }
 }
 
 const connectDB = async () => {
@@ -137,8 +200,8 @@ const connectDB = async () => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server → http://localhost:${PORT}`));
 
-const RETRY_DELAY_MS = 10000;
-
+// Retry with exponential backoff so a persistent misconfiguration does not spam
+// the logs every 10 seconds forever (10s → 20s → 40s → 60s cap).
 const connectWithRetry = async (attempt = 1) => {
   if (!MONGO_URI) return;
 
@@ -147,13 +210,13 @@ const connectWithRetry = async (attempt = 1) => {
     console.log("✅ MongoDB connected");
   } catch (err) {
     console.error(
-      `❌ MongoDB connection attempt ${attempt} failed:`,
-      err.message,
+      `❌ MongoDB connection attempt ${attempt} failed:\n${describeMongoError(err)}`,
     );
+    const delay = Math.min(10000 * 2 ** (attempt - 1), 60000);
     console.warn(
-      `⚠️ API still listening on port ${PORT} — retrying in ${RETRY_DELAY_MS / 1000}s.`,
+      `⚠️ API still listening on port ${PORT} — retrying in ${delay / 1000}s.`,
     );
-    setTimeout(() => connectWithRetry(attempt + 1), RETRY_DELAY_MS);
+    setTimeout(() => connectWithRetry(attempt + 1), delay);
   }
 };
 
