@@ -3,15 +3,15 @@
 import { useState, useRef, useEffect } from "react";
 import api from "../../api/axios";
 import ChatMessage from "./ChatMessage";
-import { Bot } from "lucide-react";
+import { Bot, X, Sparkles, AlertTriangle, PieChart, Lightbulb, Target, Calendar, TrendingDown } from "lucide-react";
 
 const QUICK_PROMPTS = [
-  { icon: "📊", text: "Analyze my spending this month" },
-  { icon: "💡", text: "Give me saving advice" },
-  { icon: "🏆", text: "Which category am I spending most on?" },
-  { icon: "📅", text: "Compare this month vs last month" },
-  { icon: "⚠️", text: "Show my unusual expenses" },
-  { icon: "📉", text: "How can I reduce my expenses?" },
+  { icon: PieChart, text: "Analyze my spending this month" },
+  { icon: Lightbulb, text: "Give me saving advice" },
+  { icon: Target, text: "Which category am I spending most on?" },
+  { icon: Calendar, text: "Compare this month vs last month" },
+  { icon: AlertTriangle, text: "Show my unusual expenses" },
+  { icon: TrendingDown, text: "How can I reduce my expenses?" },
 ];
 
 const TypingIndicator = () => (
@@ -134,7 +134,7 @@ const AIChatModal = ({ onClose }) => {
               </p>
               <div className="flex items-center gap-1.5 mt-0.5">
                 <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                {/* ✅ Changed: Gemini → Groq */}
+                {/* Changed: Gemini -> Groq */}
                 <p className="text-xs text-gray-400">
                   Online · Powered by Groq
                 </p>
@@ -154,7 +154,7 @@ const AIChatModal = ({ onClose }) => {
               onClick={onClose}
               className="w-8 h-8 flex items-center justify-center rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-all text-lg"
             >
-              ✕
+              <X className="w-5 h-5" aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -164,7 +164,7 @@ const AIChatModal = ({ onClose }) => {
           {isEmpty && (
             <div className="flex flex-col items-center justify-center h-full text-center px-4">
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mb-4 shadow-lg">
-                <span className="text-3xl">✨</span>
+                <Sparkles className="w-7 h-7 text-white" aria-hidden="true" />
               </div>
               <h3 className="font-bold text-gray-900 dark:text-white text-lg mb-1">
                 FinanceHub AI
@@ -174,18 +174,24 @@ const AIChatModal = ({ onClose }) => {
                 and give you personalized insights.
               </p>
               <div className="grid grid-cols-1 gap-2 w-full">
-                {QUICK_PROMPTS.map((prompt) => (
-                  <button
-                    key={prompt.text}
-                    onClick={() => sendMessage(prompt.text)}
-                    className="flex items-center gap-3 px-4 py-3 bg-white dark:bg-gray-800 hover:bg-violet-50 dark:hover:bg-violet-900/20 border border-gray-100 dark:border-gray-700 hover:border-violet-200 dark:hover:border-violet-700 rounded-xl text-sm text-gray-700 dark:text-gray-300 transition-all text-left group"
-                  >
-                    <span className="text-lg flex-shrink-0">{prompt.icon}</span>
-                    <span className="group-hover:text-violet-700 dark:group-hover:text-violet-300 transition-colors">
-                      {prompt.text}
-                    </span>
-                  </button>
-                ))}
+                {QUICK_PROMPTS.map((prompt) => {
+                  const Icon = prompt.icon;
+                  return (
+                    <button
+                      key={prompt.text}
+                      onClick={() => sendMessage(prompt.text)}
+                      className="flex items-center gap-3 px-4 py-3 bg-white dark:bg-gray-800 hover:bg-violet-50 dark:hover:bg-violet-900/20 border border-gray-100 dark:border-gray-700 hover:border-violet-200 dark:hover:border-violet-700 rounded-xl text-sm text-gray-700 dark:text-gray-300 transition-all text-left group"
+                    >
+                      <Icon
+                        className="w-4 h-4 flex-shrink-0"
+                        aria-hidden="true"
+                      />
+                      <span className="group-hover:text-violet-700 dark:group-hover:text-violet-300 transition-colors">
+                        {prompt.text}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -199,7 +205,7 @@ const AIChatModal = ({ onClose }) => {
               {error && (
                 <div className="flex justify-center mb-4">
                   <div className="flex items-center gap-2 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 text-red-600 dark:text-red-400 px-4 py-2.5 rounded-xl text-sm max-w-[90%]">
-                    <span>⚠️</span>
+                    <AlertTriangle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
                     <span>{error}</span>
                   </div>
                 </div>
@@ -269,7 +275,7 @@ const AIChatModal = ({ onClose }) => {
             </button>
           </div>
 
-          {/* ✅ Changed: Gemini → Groq + Llama */}
+          {/* Changed: Gemini -> Groq + Llama */}
           <p className="text-center text-xs text-gray-300 dark:text-gray-600 mt-2">
             Powered by Groq · Llama 3.3 · Analyzes your real transaction data
           </p>

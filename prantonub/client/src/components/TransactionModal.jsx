@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { TrendingDown, TrendingUp } from "lucide-react";
 import api from "../api/axios";
 import Modal from "./Modal";
 import { CATEGORIES } from "../utils/helpers";
@@ -44,7 +45,17 @@ export default function TransactionModal({ transaction, onClose, onSave }) {
                     : "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400"
                   : "text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
               }`}>
-              {t === "expense" ? "💸 Expense" : "💰 Income"}
+              {t === "expense" ? (
+                <span className="inline-flex items-center gap-1.5">
+                  <TrendingDown className="w-3.5 h-3.5" aria-hidden="true" />
+                  Expense
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5">
+                  <TrendingUp className="w-3.5 h-3.5" aria-hidden="true" />
+                  Income
+                </span>
+              )}
             </button>
           ))}
         </div>

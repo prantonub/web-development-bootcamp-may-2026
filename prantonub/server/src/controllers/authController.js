@@ -36,7 +36,7 @@ const register = asyncHandler(async (req, res) => {
 
   const passwordHash = await bcrypt.hash(password, 12);
 
-  console.log(`📝 Creating new user: ${sanitizedEmail}`);
+  console.log(`[INFO] Creating new user: ${sanitizedEmail}`);
   await User.create({
     name: sanitizedName,
     email: sanitizedEmail,

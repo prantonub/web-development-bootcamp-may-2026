@@ -4,7 +4,7 @@ const Transaction = require("../models/Transaction");
 
 // Run every day at midnight
 cron.schedule("0 0 * * *", async () => {
-  console.log("⏰ Running recurring transactions cron...");
+  console.log("[CRON] Running recurring transactions cron...");
   try {
     const today = new Date();
     today.setHours(0,0,0,0);
@@ -38,8 +38,8 @@ cron.schedule("0 0 * * *", async () => {
         await rec.save();
       }
     }
-    console.log("✅ Recurring cron done");
+    console.log("[OK] Recurring cron done");
   } catch (err) {
-    console.error("❌ Cron error:", err.message);
+    console.error("[ERROR] Cron error:", err.message);
   }
 });

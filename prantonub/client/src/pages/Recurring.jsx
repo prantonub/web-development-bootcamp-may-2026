@@ -5,7 +5,14 @@ import Modal from "../components/Modal";
 import ConfirmDialog from "../components/ConfirmDialog";
 import EmptyState from "../components/EmptyState";
 import Spinner from "../components/Spinner";
-import { CATEGORIES, CATEGORY_ICONS, formatCurrency } from "../utils/helpers";
+import { CATEGORIES, formatCurrency } from "../utils/helpers";
+import {
+  Pencil,
+  X,
+  Calendar,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
 
 const FREQ_LABELS = { daily: "Daily", weekly: "Weekly", monthly: "Monthly" };
 
@@ -149,13 +156,13 @@ export default function Recurring() {
                       onClick={() => openEdit(item)}
                       className="p-1 text-gray-400 hover:text-primary-600 transition-colors text-lg"
                     >
-                      ✎
+                      <Pencil className="w-4 h-4" aria-hidden="true" />
                     </button>
                     <button
                       onClick={() => setDeleteId(item._id)}
                       className="p-1 text-gray-400 hover:text-red-500 transition-colors text-lg"
                     >
-                      ✕
+                      <X className="w-4 h-4" aria-hidden="true" />
                     </button>
                   </div>
                 </div>
@@ -170,7 +177,7 @@ export default function Recurring() {
                     </p>
                     <div className="flex items-center gap-2 mt-1">
                       {/* FIX 1: Replaced BiCalendar with emoji */}
-                      <span className="text-gray-500 text-sm">📅</span>
+                      <Calendar className="w-4 h-4 text-gray-500" aria-hidden="true" />
                       <span className="text-xs text-gray-500 dark:text-gray-400">
                         {FREQ_LABELS[item.frequency]}
                       </span>
@@ -232,7 +239,11 @@ export default function Recurring() {
                   }`}
                 >
                   {/* FIX 2 & 3: Replaced MdTrendingDown and MdTrendingUp with emojis */}
-                  {t === "expense" ? <span>📉</span> : <span>📈</span>}
+                  {t === "expense" ? (
+                    <TrendingDown className="w-4 h-4" aria-hidden="true" />
+                  ) : (
+                    <TrendingUp className="w-4 h-4" aria-hidden="true" />
+                  )}
                   {t}
                 </button>
               ))}

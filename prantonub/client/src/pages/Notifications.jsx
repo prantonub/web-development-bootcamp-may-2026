@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import { Inbox, Bell, Check, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { notificationAPI } from "../api/notification";
 import { useToast } from "../components/Toast";
 import Spinner from "../components/Spinner";
 import EmptyState from "../components/EmptyState";
+import NotificationIcon from "../components/NotificationIcon";
 
 export default function Notifications() {
   const [notifications, setNotifications] = useState([]);
@@ -88,21 +90,6 @@ export default function Notifications() {
     }
   };
 
-  const getNotificationIcon = (type) => {
-    switch (type) {
-      case "budget_warning":
-        return "⚠️";
-      case "budget_exceeded":
-        return "🚨";
-      case "anomaly_detected":
-        return "🔍";
-      case "goal_achieved":
-        return "🎉";
-      default:
-        return "📢";
-    }
-  };
-
   const getNotificationColor = (type) => {
     switch (type) {
       case "budget_warning":
@@ -128,7 +115,10 @@ export default function Notifications() {
       {/* Header */}
       <div className="page-header">
         <div>
-          <h1 className="page-title">Notifications 🔔</h1>
+          <h1 className="page-title flex items-center gap-2">
+            Notifications
+            <Bell className="w-6 h-6 text-primary-500" aria-hidden="true" />
+          </h1>
           <p className="page-sub">
             {total > 0 ? `${total} total notifications` : "No notifications"}
           </p>
@@ -171,7 +161,7 @@ export default function Notifications() {
       {/* Notifications list */}
       {notifications.length === 0 ? (
         <EmptyState
-          icon="📭"
+          icon={Inbox}
           title="No notifications"
           sub={
             filter === "all"
@@ -190,9 +180,10 @@ export default function Notifications() {
             >
               <div className="flex gap-4">
                 {/* Icon */}
-                <div className="text-3xl flex-shrink-0">
-                  {getNotificationIcon(notification.type)}
-                </div>
+                <NotificationIcon
+                  type={notification.type}
+                  className="w-6 h-6 flex-shrink-0"
+                />
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
@@ -247,7 +238,7 @@ export default function Notifications() {
                       className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors text-blue-600 dark:text-blue-400"
                       title="Mark as read"
                     >
-                      ✓
+                      <Check className="w-4 h-4" aria-hidden="true" />
                     </button>
                   )}
                   <button
@@ -255,7 +246,7 @@ export default function Notifications() {
                     className="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors text-red-500"
                     title="Delete"
                   >
-                    ✕
+                    <X className="w-4 h-4" aria-hidden="true" />
                   </button>
                 </div>
               </div>
@@ -272,7 +263,7 @@ export default function Notifications() {
             disabled={page === 1}
             className="btn-secondary btn-sm disabled:opacity-50"
           >
-            ← Previous
+            <ChevronLeft className="w-4 h-4" aria-hidden="true" /> Previous
           </button>
           <span className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             Page {page} of {pages}
@@ -282,7 +273,7 @@ export default function Notifications() {
             disabled={page === pages}
             className="btn-secondary btn-sm disabled:opacity-50"
           >
-            Next →
+            Next <ChevronRight className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       )}

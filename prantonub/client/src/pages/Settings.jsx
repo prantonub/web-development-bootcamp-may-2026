@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { CheckCircle, XCircle, Link as LinkIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
@@ -22,8 +23,14 @@ const Alert = ({ type, msg }) =>
     <div
       className={`text-sm px-4 py-3 rounded-xl mb-4 ${type === "success" ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400" : "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400"}`}
     >
-      {type === "success" ? "✅ " : "❌ "}
-      {msg}
+      <span className="inline-flex items-center gap-2">
+        {type === "success" ? (
+          <CheckCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+        ) : (
+          <XCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+        )}
+        {msg}
+      </span>
     </div>
   ) : null;
 
@@ -126,7 +133,7 @@ export default function Settings() {
           <p className="text-gray-400 text-sm">{user?.email}</p>
           {isGoogle && (
             <span className="badge bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs mt-1">
-              🔗 Google Account
+              <LinkIcon className="w-3 h-3 inline" aria-hidden="true" /> Google Account
             </span>
           )}
         </div>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { TrendingDown, PieChart, Target, RefreshCw } from "lucide-react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
@@ -57,16 +58,16 @@ export default function Login() {
           </p>
           <div className="mt-8 grid grid-cols-2 gap-4">
             {[
-              ["💸", "Expense Tracking"],
-              ["📊", "Visual Analytics"],
-              ["🎯", "Budget Goals"],
-              ["🔄", "Auto Recurring"],
-            ].map(([icon, text]) => (
+              [TrendingDown, "Expense Tracking"],
+              [PieChart, "Visual Analytics"],
+              [Target, "Budget Goals"],
+              [RefreshCw, "Auto Recurring"],
+            ].map(([Icon, text]) => (
               <div
                 key={text}
                 className="flex items-center gap-2 text-white/80 text-sm"
               >
-                <span className="text-xl">{icon}</span>
+                <Icon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
                 {text}
               </div>
             ))}

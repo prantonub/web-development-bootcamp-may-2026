@@ -1,7 +1,13 @@
-export default function EmptyState({ icon = null, title, sub, action }) {
+import { ClipboardList } from "lucide-react";
+
+export default function EmptyState({ icon, title, sub, action }) {
+  const Icon = icon || ClipboardList;
   return (
     <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in">
-      <p className="text-5xl mb-4 text-gray-300 dark:text-gray-600">📋</p>
+      <Icon
+        className="w-12 h-12 mb-4 text-gray-300 dark:text-gray-600"
+        aria-hidden="true"
+      />
       <p className="font-bold text-gray-800 dark:text-gray-200 text-xl">
         {title}
       </p>

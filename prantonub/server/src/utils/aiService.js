@@ -3,7 +3,7 @@
 
 const Groq = require("groq-sdk");
 
-// ⚠️ Do NOT construct the Groq client at module scope.
+// [WARN] Do NOT construct the Groq client at module scope.
 // groq-sdk THROWS when GROQ_API_KEY is missing/undefined, and this module is
 // loaded while the server boots — so a missing key would crash the entire API
 // before it ever binds a port, which Render reports as "Deploy failed".
@@ -84,27 +84,27 @@ const buildFinancialContext = (transactions) => {
   return `
 === USER FINANCIAL DATA ===
 
-📅 THIS MONTH (${now.toLocaleString("default", { month: "long", year: "numeric" })}):
+THIS MONTH (${now.toLocaleString("default", { month: "long", year: "numeric" })}):
   - Total Income:   $${sum(thisMonthTx, "income").toFixed(2)}
   - Total Expenses: $${sum(thisMonthTx, "expense").toFixed(2)}
   - Net Savings:    $${(sum(thisMonthTx, "income") - sum(thisMonthTx, "expense")).toFixed(2)}
   - Transactions:   ${thisMonthTx.length}
 
-📅 LAST MONTH:
+LAST MONTH:
   - Total Income:   $${sum(lastMonthTx, "income").toFixed(2)}
   - Total Expenses: $${sum(lastMonthTx, "expense").toFixed(2)}
   - Net Savings:    $${(sum(lastMonthTx, "income") - sum(lastMonthTx, "expense")).toFixed(2)}
 
-📊 SPENDING BY CATEGORY (this month):
+SPENDING BY CATEGORY (this month):
 ${categoryBreakdown || "  No expense data"}
 
-⚠️ UNUSUAL EXPENSES (above 2x average of $${avgExpense.toFixed(2)}):
+[WARN] UNUSUAL EXPENSES (above 2x average of $${avgExpense.toFixed(2)}):
 ${unusualExpenses || "  None detected"}
 
-🕐 RECENT 10 TRANSACTIONS:
+RECENT 10 TRANSACTIONS:
 ${recentList || "  No transactions yet"}
 
-📈 ALL-TIME TOTALS:
+ALL-TIME TOTALS:
   - Total Income:   $${sum(transactions, "income").toFixed(2)}
   - Total Expenses: $${sum(transactions, "expense").toFixed(2)}
   - Total Records:  ${transactions.length}

@@ -35,7 +35,7 @@ const AIChatButton = () => {
         <Bot className="w-6 h-6" />
       </button>
 
-      {/* ✅ Fixed tooltip — uses state instead of broken group-hover */}
+      {/* Fixed tooltip - uses state instead of broken group-hover */}
       {!isOpen && showTooltip && (
         <div className="fixed bottom-8 right-24 z-40 pointer-events-none">
           <div className="bg-gray-900 dark:bg-gray-700 text-white text-xs font-medium px-3 py-1.5 rounded-lg whitespace-nowrap shadow-lg">

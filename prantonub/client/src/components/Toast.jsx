@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { CheckCircle, XCircle, AlertTriangle, Info, X } from "lucide-react";
 
 const ToastContext = React.createContext();
 
@@ -77,23 +78,24 @@ function Toast({ toast, onClose }) {
   };
 
   const icons = {
-    error: "❌",
-    success: "✅",
-    warning: "⚠️",
-    info: "ℹ️",
+    error: XCircle,
+    success: CheckCircle,
+    warning: AlertTriangle,
+    info: Info,
   };
+  const Icon = icons[toast.type] || Info;
 
   return (
     <div
       className={`${colors[toast.type]} text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3 animate-slide-up`}
     >
-      <span className="text-lg">{icons[toast.type]}</span>
+      <Icon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
       <p className="flex-1 text-sm font-medium">{toast.message}</p>
       <button
         onClick={onClose}
-        className="text-lg leading-none hover:opacity-75 transition-opacity"
+        className="leading-none hover:opacity-75 transition-opacity"
       >
-        ✕
+        <X className="w-4 h-4" aria-hidden="true" />
       </button>
     </div>
   );

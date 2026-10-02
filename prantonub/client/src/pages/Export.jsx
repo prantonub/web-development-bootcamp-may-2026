@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { FileText, Loader2, Download, XCircle } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
 
@@ -49,7 +50,7 @@ export default function Export() {
     setReportLoading(true);
     try {
       const url = `${BACKEND_URL}/api/export/summary?month=${reportMonth}&year=${reportYear}&token=${token}`;
-      console.log("📄 Opening report URL:", url);
+      console.log("Opening report URL:", url);
 
       const newWindow = window.open(url, "_blank");
       if (
@@ -61,7 +62,7 @@ export default function Export() {
       }
     } catch (err) {
       setError("Failed to generate report. Please try again.");
-      console.error("❌ Report error:", err);
+      console.error("Report error:", err);
     } finally {
       setReportLoading(false);
     }
@@ -90,7 +91,7 @@ export default function Export() {
       window.URL.revokeObjectURL(url);
     } catch (err) {
       setError("CSV export failed. Please try again.");
-      console.error("❌ CSV error:", err);
+      console.error("CSV error:", err);
     }
   };
 
@@ -109,7 +110,10 @@ export default function Export() {
       {/* Error message */}
       {error && (
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 text-sm px-4 py-3 rounded-xl">
-          ❌ {error}
+          <span className="inline-flex items-center gap-2">
+            <XCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+            {error}
+          </span>
         </div>
       )}
 
@@ -160,14 +164,21 @@ export default function Export() {
           disabled={reportLoading}
           className="w-full btn-primary justify-center mb-3"
         >
-          {reportLoading
-            ? "⏳ Opening..."
-            : `📄 Generate ${MONTHS[reportMonth - 1]} ${reportYear} PDF Report`}
+          {reportLoading ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+              Opening...
+            </>
+          ) : (
+            <>
+              <FileText className="w-4 h-4" aria-hidden="true" />
+              {`Generate ${MONTHS[reportMonth - 1]} ${reportYear} PDF Report`}
+            </>
+          )}
         </button>
 
         <p className="text-xs text-gray-400 text-center">
-          Report opens in a new tab → click <strong>⬇ Download PDF</strong> to
-          save as PDF
+          Report opens in a new tab. Click <strong>Download PDF</strong> to save it.
         </p>
       </div>
 
@@ -186,7 +197,8 @@ export default function Export() {
           onClick={handleExportCSV}
           className="w-full btn-secondary justify-center"
         >
-          📊 Export All Transactions to CSV
+          <Download className="w-4 h-4" aria-hidden="true" /> Export All
+          Transactions to CSV
         </button>
       </div>
     </div>

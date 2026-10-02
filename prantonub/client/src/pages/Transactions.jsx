@@ -7,10 +7,19 @@ import EmptyState from "../components/EmptyState";
 import Spinner from "../components/Spinner";
 import {
   CATEGORIES,
-  CATEGORY_ICONS,
   formatCurrency,
   formatDate,
 } from "../utils/helpers";
+import CategoryIcon from "../components/CategoryIcon";
+import {
+  Download,
+  X,
+  Inbox,
+  Pencil,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 export default function Transactions() {
   const { user } = useAuth();
@@ -98,7 +107,7 @@ export default function Transactions() {
         </div>
         <div className="flex gap-2">
           <button onClick={handleExportCSV} className="btn-secondary btn-sm">
-            ⬇️ CSV
+            <Download className="w-4 h-4" aria-hidden="true" /> CSV
           </button>
           <button onClick={() => setModal("add")} className="btn-primary btn-sm">
             <span>+</span> Add
@@ -111,7 +120,7 @@ export default function Transactions() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
           <input
             className="input text-sm col-span-2 md:col-span-1"
-            placeholder="🔍 Search..."
+            placeholder="Search..."
             value={filters.search}
             onChange={(e) => setFilter("search", e.target.value)}
           />
@@ -149,7 +158,7 @@ export default function Transactions() {
             />
             {hasFilters && (
               <button onClick={clearFilters} className="btn-secondary btn-sm whitespace-nowrap">
-                ✕ Clear
+                <X className="w-3.5 h-3.5" aria-hidden="true" /> Clear
               </button>
             )}
           </div>
@@ -164,7 +173,7 @@ export default function Transactions() {
           </div>
         ) : data.transactions.length === 0 ? (
           <EmptyState
-            icon="📭"
+            icon={Inbox}
             title="No transactions found"
             sub="Try adjusting your filters or add a new transaction"
             action={
@@ -200,8 +209,8 @@ export default function Transactions() {
                     >
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
-                          <span className="text-xl w-8 text-center flex-shrink-0">
-                            {CATEGORY_ICONS[t.category] || "💳"}
+                          <span className="w-8 flex-shrink-0 flex items-center justify-center">
+                            <CategoryIcon name={t.category} className="w-5 h-5" />
                           </span>
                           <div>
                             <p className="font-medium text-sm text-gray-800 dark:text-gray-200">
@@ -244,13 +253,13 @@ export default function Transactions() {
                             onClick={() => setModal(t)}
                             className="btn-secondary btn-sm"
                           >
-                            ✏️ Edit
+                            <Pencil className="w-3.5 h-3.5 inline-block" aria-hidden="true" /> Edit
                           </button>
                           <button
                             onClick={() => setDeleteId(t._id)}
                             className="btn btn-sm bg-red-50 dark:bg-red-900/20 text-red-500 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40"
                           >
-                            🗑️ Delete
+                            <Trash2 className="w-3.5 h-3.5 inline-block" aria-hidden="true" /> Delete
                           </button>
                         </div>
                       </td>
@@ -268,8 +277,8 @@ export default function Transactions() {
                   className="flex items-center justify-between px-4 py-4 gap-3"
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <span className="text-xl flex-shrink-0">
-                      {CATEGORY_ICONS[t.category] || "💳"}
+                    <span className="flex-shrink-0">
+                      <CategoryIcon name={t.category} className="w-5 h-5" />
                     </span>
                     <div className="min-w-0">
                       <p className="font-medium text-sm text-gray-800 dark:text-gray-200 truncate">
@@ -294,14 +303,14 @@ export default function Transactions() {
                       className="text-primary-600 p-1 hover:text-primary-700"
                       title="Edit"
                     >
-                      ✏️
+                      <Pencil className="w-4 h-4" aria-hidden="true" />
                     </button>
                     <button
                       onClick={() => setDeleteId(t._id)}
                       className="text-red-500 p-1 hover:text-red-600"
                       title="Delete"
                     >
-                      🗑️
+                      <Trash2 className="w-4 h-4" aria-hidden="true" />
                     </button>
                   </div>
                 </div>
@@ -320,14 +329,14 @@ export default function Transactions() {
                     onClick={() => setFilters((f) => ({ ...f, page: f.page - 1 }))}
                     className="btn-secondary btn-sm disabled:opacity-40"
                   >
-                    ← Prev
+                    <ChevronLeft className="w-4 h-4" aria-hidden="true" /> Prev
                   </button>
                   <button
                     disabled={filters.page === data.pages}
                     onClick={() => setFilters((f) => ({ ...f, page: f.page + 1 }))}
                     className="btn-secondary btn-sm disabled:opacity-40"
                   >
-                    Next →
+                    Next <ChevronRight className="w-4 h-4" aria-hidden="true" />
                   </button>
                 </div>
               </div>

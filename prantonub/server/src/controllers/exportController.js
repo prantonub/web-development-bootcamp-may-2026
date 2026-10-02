@@ -8,7 +8,7 @@ const Transaction = require("../models/Transaction");
 // ─────────────────────────────────────────────────────────────────────────────
 const exportCSV = async (req, res) => {
   try {
-    console.log(`📊 CSV export requested by user: ${req.user._id}`);
+    console.log(`CSV export requested by user: ${req.user._id}`);
 
     const { startDate, endDate, type, category } = req.query;
     const filter = { user: req.user._id };
@@ -25,7 +25,7 @@ const exportCSV = async (req, res) => {
     }
 
     const transactions = await Transaction.find(filter).sort("-date");
-    console.log(`📋 Exporting ${transactions.length} transactions to CSV`);
+    console.log(`Exporting ${transactions.length} transactions to CSV`);
 
     const headers = ["Date", "Title", "Category", "Type", "Amount", "Note"];
     const rows = transactions.map((t) => [
@@ -45,12 +45,12 @@ const exportCSV = async (req, res) => {
       `attachment; filename="FinanceHub-export-${Date.now()}.csv"`,
     );
     console.log(
-      `✅ CSV export generated successfully for user: ${req.user._id}`,
+      `[OK] CSV export generated successfully for user: ${req.user._id}`,
     );
     res.send(csv);
   } catch (err) {
     console.error(
-      `❌ CSV export failed for user ${req.user._id}:`,
+      `[ERROR] CSV export failed for user ${req.user._id}:`,
       err.message,
     );
     res.status(500).json({ success: false, error: err.message });
@@ -63,13 +63,13 @@ const exportCSV = async (req, res) => {
 // ─────────────────────────────────────────────────────────────────────────────
 const exportSummary = async (req, res) => {
   try {
-    console.log(`📄 Generating report for user: ${req.user._id}`);
+    console.log(`Generating report for user: ${req.user._id}`);
 
     const now = new Date();
     const month = Number(req.query.month) || now.getMonth() + 1;
     const year = Number(req.query.year) || now.getFullYear();
 
-    console.log(`📅 Report period: ${month}/${year}`);
+    console.log(`Report period: ${month}/${year}`);
 
     const start = new Date(year, month - 1, 1, 0, 0, 0, 0);
     const end = new Date(year, month, 0, 23, 59, 59, 999);
@@ -79,7 +79,7 @@ const exportSummary = async (req, res) => {
       date: { $gte: start, $lte: end },
     }).sort("-date");
 
-    console.log(`📊 Found ${transactions.length} transactions`);
+    console.log(`Found ${transactions.length} transactions`);
 
     const totalIncome = transactions
       .filter((t) => t.type === "income")
@@ -142,7 +142,7 @@ const exportSummary = async (req, res) => {
       onclick="downloadPDF()"
       class="flex items-center gap-2 bg-violet-700 hover:bg-violet-800 active:scale-95 text-white text-sm font-semibold px-5 py-3 rounded-full shadow-xl transition-all duration-200"
     >
-      <span id="btnIcon">⬇</span>
+      <span id="btnIcon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m19 12-7 7-7-7"/></svg></span>
       <span id="btnText">Download PDF</span>
       <div id="spinner" style="display:none;" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin-btn"></div>
     </button>
@@ -206,7 +206,6 @@ const exportSummary = async (req, res) => {
           ? `
       <div class="mb-10">
         <div class="flex items-center gap-3 mb-5 pb-4 border-b border-gray-100">
-          <span class="text-lg">📊</span>
           <h2 class="text-sm font-bold text-gray-800 uppercase tracking-wider">Spending by Category</h2>
           <span class="ml-auto text-xs text-gray-400 bg-gray-100 px-3 py-1 rounded-full">${Object.keys(catMap).length} categories</span>
         </div>
@@ -238,7 +237,6 @@ const exportSummary = async (req, res) => {
       <!-- Transactions Table -->
       <div>
         <div class="flex items-center gap-3 mb-5 pb-4 border-b border-gray-100">
-          <span class="text-lg">📋</span>
           <h2 class="text-sm font-bold text-gray-800 uppercase tracking-wider">All Transactions</h2>
           <span class="ml-auto text-xs text-gray-400 bg-gray-100 px-3 py-1 rounded-full">${transactions.length} records</span>
         </div>
@@ -283,7 +281,7 @@ const exportSummary = async (req, res) => {
         </div>`
             : `
         <div class="text-center py-14 text-gray-400">
-          <p class="text-4xl mb-3">📭</p>
+          <p class="mb-3"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></p>
           <p class="text-sm font-medium">No transactions found for this period</p>
         </div>`
         }
@@ -334,11 +332,11 @@ const exportSummary = async (req, res) => {
 </html>`;
 
     res.setHeader("Content-Type", "text/html");
-    console.log(`✅ Report generated successfully for user: ${req.user._id}`);
+    console.log(`[OK] Report generated successfully for user: ${req.user._id}`);
     res.send(html);
   } catch (err) {
     console.error(
-      `❌ Report generation failed for user ${req.user._id}:`,
+      `[ERROR] Report generation failed for user ${req.user._id}:`,
       err.message,
     );
     res.status(500).json({ success: false, error: err.message });

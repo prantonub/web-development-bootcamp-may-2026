@@ -1,19 +1,32 @@
 import { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import {
+  LayoutDashboard,
+  CreditCard,
+  Target,
+  RefreshCw,
+  TrendingUp,
+  Bell,
+  FileText,
+  Settings,
+  Sun,
+  Moon,
+  LogOut,
+} from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/axios";
 import NotificationBell from "./NotificationBell";
 import AIChatButton from "./ai/AIChatButton";
 
 const NAV = [
-  { to: "/", label: "Dashboard", icon: "📊", exact: true },
-  { to: "/transactions", label: "Transactions", icon: "💳" },
-  { to: "/budgets", label: "Budgets", icon: "🎯" }, 
-  { to: "/recurring", label: "Recurring", icon: "🔄" },
-  { to: "/analytics", label: "Analytics", icon: "📈" },
-  { to: "/notifications", label: "Notifications", icon: "🔔" },
-  { to: "/export", label: "Export & Reports", icon: "📄" },
-  { to: "/settings", label: "Settings", icon: "⚙️" },
+  { to: "/", label: "Dashboard", Icon: LayoutDashboard, exact: true },
+  { to: "/transactions", label: "Transactions", Icon: CreditCard },
+  { to: "/budgets", label: "Budgets", Icon: Target },
+  { to: "/recurring", label: "Recurring", Icon: RefreshCw },
+  { to: "/analytics", label: "Analytics", Icon: TrendingUp },
+  { to: "/notifications", label: "Notifications", Icon: Bell },
+  { to: "/export", label: "Export & Reports", Icon: FileText },
+  { to: "/settings", label: "Settings", Icon: Settings },
 ];
 
 export default function Layout() {
@@ -34,7 +47,7 @@ export default function Layout() {
     } catch {}
   };
 
-  const NavItem = ({ to, label, icon, exact }) => (
+  const NavItem = ({ to, label, Icon, exact }) => (
     <NavLink
       to={to}
       end={exact}
@@ -47,7 +60,7 @@ export default function Layout() {
         }`
       }
     >
-      <span className="text-lg w-6 text-center">{icon}</span>
+      <Icon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
       <span>{label}</span>
     </NavLink>
   );
@@ -87,9 +100,11 @@ export default function Layout() {
           onClick={toggleTheme}
           className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95 transition-all duration-200"
         >
-          <span className="text-lg w-6 text-center">
-            {user?.theme === "dark" ? "☀️" : "🌙"}
-          </span>
+          {user?.theme === "dark" ? (
+            <Sun className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+          ) : (
+            <Moon className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
+          )}
           <span className="hidden sm:inline">
             {user?.theme === "dark" ? "Light Mode" : "Dark Mode"}
           </span>
@@ -122,7 +137,7 @@ export default function Layout() {
           onClick={handleLogout}
           className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 active:scale-95 transition-all duration-200"
         >
-          <span className="text-lg w-6 text-center">🚪</span>
+          <LogOut className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
           <span className="hidden sm:inline">Logout</span>
         </button>
       </div>
@@ -185,7 +200,11 @@ export default function Layout() {
               onClick={toggleTheme}
               className="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95 transition-all text-lg"
             >
-              {user?.theme === "dark" ? "☀️" : "🌙"}
+              {user?.theme === "dark" ? (
+                <Sun className="w-5 h-5" aria-hidden="true" />
+              ) : (
+                <Moon className="w-5 h-5" aria-hidden="true" />
+              )}
             </button>
           </div>
         </header>

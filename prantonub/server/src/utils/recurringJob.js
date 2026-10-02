@@ -33,9 +33,9 @@ const processRecurring = async () => {
     }
 
     if (due.length > 0)
-      console.log(`✅ Processed ${due.length} recurring transaction(s)`);
+      console.log(`[OK] Processed ${due.length} recurring transaction(s)`);
   } catch (err) {
-    console.error("❌ Recurring job error:", err.message);
+    console.error("[ERROR] Recurring job error:", err.message);
   }
 };
 
@@ -44,7 +44,7 @@ const startRecurringJob = () => {
   cron.schedule("0 * * * *", processRecurring);
   // Also run once at startup to catch any missed
   processRecurring();
-  console.log("⏰ Recurring job scheduler started");
+  console.log("[CRON] Recurring job scheduler started");
 };
 
 module.exports = { startRecurringJob };

@@ -1,10 +1,13 @@
+import { TrendingUp, TrendingDown } from "lucide-react";
+
 export default function StatCard({ title, value, sub, icon, color, trend }) {
+  const Icon = icon;
   return (
     <div className="card p-5 flex items-start gap-4 hover:shadow-card-hover transition-all duration-300 hover:border-primary-200 dark:hover:border-primary-900 animate-slide-up">
       <div
-        className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl flex-shrink-0 ${color} transition-all duration-300 group-hover:scale-110`}
+        className={`w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 ${color} transition-all duration-300 group-hover:scale-110`}
       >
-        {icon}
+        {Icon ? <Icon className="w-6 h-6" aria-hidden="true" /> : null}
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-widest letter-spacing">
@@ -24,9 +27,15 @@ export default function StatCard({ title, value, sub, icon, color, trend }) {
             }`}
           >
             {trend === "up" ? (
-              <span className="inline-block animate-bounce-light">📈</span>
+              <TrendingUp
+                className="w-3.5 h-3.5 inline-block animate-bounce-light"
+                aria-hidden="true"
+              />
             ) : trend === "down" ? (
-              <span className="inline-block animate-bounce-light">📉</span>
+              <TrendingDown
+                className="w-3.5 h-3.5 inline-block animate-bounce-light"
+                aria-hidden="true"
+              />
             ) : null}
             {sub}
           </p>

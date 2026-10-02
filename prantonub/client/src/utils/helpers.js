@@ -12,23 +12,8 @@ export const CATEGORIES = [
   "Other",
 ];
 
-// Icon emojis for categories
-export const CATEGORY_ICON_NAMES = {
-  "Food & Dining": "🍗",
-  Transportation: "🚗",
-  Shopping: "🛍️",
-  "Bills & Utilities": "💡",
-  Healthcare: "💊",
-  Entertainment: "🎬",
-  Education: "🎓",
-  Travel: "✈️",
-  Savings: "🏦",
-  Salary: "💰",
-  Other: "📦",
-};
-
-// Legacy export for backward compatibility
-export const CATEGORY_ICONS = CATEGORY_ICON_NAMES;
+// Category icons are rendered by components/CategoryIcon.jsx (lucide-react icons).
+// Usage: <CategoryIcon name={category} className="w-5 h-5" />
 
 export const CATEGORY_COLORS = {
   "Food & Dining": "#f59e0b",

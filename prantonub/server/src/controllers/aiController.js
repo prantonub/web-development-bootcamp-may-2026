@@ -31,7 +31,7 @@ const chat = async (req, res) => {
         .json({ success: false, error: "Message too long (max 1000 chars)" });
     }
 
-    // ✅ Check Groq API key (replaced Gemini check)
+    // [OK] Check Groq API key (replaced Gemini check)
     if (!process.env.GROQ_API_KEY) {
       return res.status(503).json({
         success: false,
@@ -49,14 +49,14 @@ const chat = async (req, res) => {
     // Sanitize message — strip HTML tags to prevent injection
     const sanitizedMessage = message.replace(/<[^>]*>/g, "").trim();
 
-    // ✅ Call Groq with financial context
+    // [OK] Call Groq with financial context
     const aiResponse = await askAI(transactions, history, sanitizedMessage);
 
     res.json({ success: true, response: aiResponse });
   } catch (err) {
     console.error("AI Chat Error:", err.message);
 
-    // ✅ Handle Groq-specific errors
+    // [OK] Handle Groq-specific errors
     if (
       err.message?.includes("401") ||
       err.message?.includes("invalid_api_key")

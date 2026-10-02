@@ -30,9 +30,19 @@ import {
   formatCurrency,
   MONTH_NAMES,
   CATEGORY_COLORS,
-  CATEGORY_ICONS,
   pctChange,
 } from "../utils/helpers";
+import CategoryIcon from "../components/CategoryIcon";
+import {
+  Wallet,
+  CreditCard,
+  PiggyBank,
+  AlertTriangle,
+  ClipboardList,
+  FileText,
+  PieChart as PieChartIcon,
+  ArrowRight,
+} from "lucide-react";
 
 const COLORS = [
   "#7c3aed",
@@ -157,7 +167,7 @@ export default function Dashboard() {
         <StatCard
           title="Monthly Income"
           value={formatCurrency(summary?.thisMonth?.income || 0, cur)}
-          icon="💰"
+          icon={Wallet}
           color="bg-emerald-50 dark:bg-emerald-900/20"
           sub={
             incPct
@@ -169,7 +179,7 @@ export default function Dashboard() {
         <StatCard
           title="Monthly Expenses"
           value={formatCurrency(summary?.thisMonth?.expense || 0, cur)}
-          icon="💸"
+          icon={CreditCard}
           color="bg-red-50 dark:bg-red-900/20"
           sub={
             expPct
@@ -181,7 +191,7 @@ export default function Dashboard() {
         <StatCard
           title="Net Savings"
           value={formatCurrency(savings, cur)}
-          icon={savings >= 0 ? "🏦" : "⚠️"}
+          icon={savings >= 0 ? PiggyBank : AlertTriangle}
           color={
             savings >= 0
               ? "bg-primary-50 dark:bg-primary-900/20"
@@ -192,7 +202,7 @@ export default function Dashboard() {
         <StatCard
           title="Transactions"
           value={summary?.recentTransactions?.length ?? 0}
-          icon="📋"
+          icon={ClipboardList}
           color="bg-blue-50 dark:bg-blue-900/20"
           sub="Recent entries"
         />
@@ -210,7 +220,11 @@ export default function Dashboard() {
               to="/analytics"
               className="text-sm text-primary-600 hover:text-primary-700 dark:hover:text-primary-400 font-medium transition-colors"
             >
-              Full analytics →
+              Full analytics
+              <ArrowRight
+                className="w-3.5 h-3.5 inline-block"
+                aria-hidden="true"
+              />
             </Link>
           </div>
           {monthlyChartData.length > 0 ? (
@@ -249,7 +263,7 @@ export default function Dashboard() {
             </div>
           ) : (
             <EmptyState
-              icon="📊"
+              icon={PieChartIcon}
               title="No data yet"
               sub="Add transactions to see charts"
             />
@@ -299,7 +313,7 @@ export default function Dashboard() {
               </ResponsiveContainer>
             </div>
           ) : (
-            <EmptyState icon="🥧" title="No categories yet" />
+            <EmptyState icon={PieChartIcon} title="No categories yet" />
           )}
         </div>
       </div>
@@ -314,7 +328,11 @@ export default function Dashboard() {
             to="/transactions"
             className="text-sm text-primary-600 hover:text-primary-700 dark:hover:text-primary-400 font-medium transition-colors"
           >
-            View all →
+            View all
+            <ArrowRight
+              className="w-3.5 h-3.5 inline-block"
+              aria-hidden="true"
+            />
           </Link>
         </div>
         {summary?.recentTransactions?.length > 0 ? (
@@ -326,8 +344,8 @@ export default function Dashboard() {
                 style={{ animation: `slideUp 0.4s ease-out ${i * 50}ms both` }}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-gray-800 flex items-center justify-center text-lg flex-shrink-0 transition-transform hover:scale-110">
-                    {CATEGORY_ICONS[t.category] || "💳"}
+                  <div className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-gray-800 flex items-center justify-center flex-shrink-0 transition-transform hover:scale-110">
+                    <CategoryIcon name={t.category} className="w-5 h-5" />
                   </div>
                   <div>
                     <p className="font-semibold text-sm text-gray-800 dark:text-gray-200">
@@ -349,7 +367,7 @@ export default function Dashboard() {
           </div>
         ) : (
           <EmptyState
-            icon="📝"
+            icon={FileText}
             title="No transactions yet"
             sub="Add your first transaction to get started"
             action={

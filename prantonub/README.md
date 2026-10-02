@@ -1,7 +1,7 @@
 
 <div align="center">
 
-# 💰 FinanceHub
+# FinanceHub
 ### Personal Expense Tracker — Full Stack MERN Application
 
 <br/>
@@ -22,13 +22,13 @@
 
 ---
 
-### 🌐 Live Demo
+### Live Demo
 
 | Service | Link |
 |:--:|:--|
-| 🖥️ Frontend | https://financehub-prantonub.vercel.app/ |
-| 🔌 Backend API | https://financehub-personal-expence-tracker.onrender.com |
-| 🗄️ Database | MongoDB Atlas |
+| Frontend | https://financehub-prantonub.vercel.app/ |
+|  Backend API | https://financehub-personal-expence-tracker.onrender.com |
+| Database | MongoDB Atlas |
 
 ---
 
@@ -36,123 +36,123 @@
 
 <br/>
 
-## ✨ Features
+## Features
 
 <details>
-<summary><b>🔐 Authentication & Security</b></summary>
+<summary><b> Authentication & Security</b></summary>
 <br/>
 
-- 📧 Email & password registration (no email verification required)
-- 🔒 Secure login with **JWT tokens** (7-day expiry)
-- 🔑 **Google OAuth 2.0** sign-in via Passport.js
-- 🛡️ Protected routes on both **frontend and backend**
-- 🚪 Logout with full session cleanup
+-  Email & password registration (no email verification required)
+-  Secure login with **JWT tokens** (7-day expiry)
+-  **Google OAuth 2.0** sign-in via Passport.js
+- Protected routes on both **frontend and backend**
+-  Logout with full session cleanup
 
 </details>
 
 <details>
-<summary><b>🤖 AI Finance Assistant (Chatbot)</b></summary>
+<summary><b> AI Finance Assistant (Chatbot)</b></summary>
 <br/>
 
-- 🧠 Built-in AI chatbot to help users with **finance-related questions**
-- 💬 Users can ask anything about **budgeting, saving, expenses, and money management**
-- 📊 AI can analyze and explain **real transaction data insights**
-- ⚡ Powered by **Groq API + Llama 3.3 model** for fast responses
-- 📈 Provides personalized financial suggestions based on user activity
-- 🔐 Works securely with user-authenticated data only
-- 🚀 Integrated directly inside the FinanceHub dashboard for easy access
+-  Built-in AI chatbot to help users with **finance-related questions**
+-  Users can ask anything about **budgeting, saving, expenses, and money management**
+-  AI can analyze and explain **real transaction data insights**
+- Powered by **Groq API + Llama 3.3 model** for fast responses
+-  Provides personalized financial suggestions based on user activity
+-  Works securely with user-authenticated data only
+-  Integrated directly inside the FinanceHub dashboard for easy access
 
 </details>
 
 <details>
-<summary><b>💳 Transaction Management</b></summary>
+<summary><b> Transaction Management</b></summary>
 <br/>
 
-- ➕ Add **income** and **expense** transactions
-- ✏️ Edit and delete any transaction
-- 🔍 Filter by **category**, **type**, **date range**, and **keyword search**
-- 📄 Pagination — 15 records per page
-- ⬇️ Export filtered transactions to **CSV**
+- Add **income** and **expense** transactions
+- Edit and delete any transaction
+-  Filter by **category**, **type**, **date range**, and **keyword search**
+-  Pagination — 15 records per page
+- Export filtered transactions to **CSV**
 
 </details>
 
 <details>
-<summary><b>📊 Dashboard</b></summary>
+<summary><b> Dashboard</b></summary>
 <br/>
 
-- 💹 Monthly **income**, **expense**, and **net savings** summary cards
-- 📊 Income vs Expense **bar chart** (6-month view)
-- 🥧 Spending by category **donut pie chart**
-- 🕐 **Recent transactions** list
+-  Monthly **income**, **expense**, and **net savings** summary cards
+-  Income vs Expense **bar chart** (6-month view)
+-  Spending by category **donut pie chart**
+-  **Recent transactions** list
 
 </details>
 
 <details>
-<summary><b>🎯 Budget Goals</b></summary>
+<summary><b> Budget Goals</b></summary>
 <br/>
 
-- 🎯 Set **per-category** monthly spending limits
-- 📶 Real-time **progress bars**
-- 🚦 Color-coded budget alerts:
-  - 🟢 **Green** — Under 70% · Safe zone
-  - 🟡 **Yellow** — 70–99% · Near limit
-  - 🔴 **Red** — 100%+ · Over budget
-- 📅 Month and year selector
+-  Set **per-category** monthly spending limits
+-  Real-time **progress bars**
+-  Color-coded budget alerts:
+  -  **Green** — Under 70% · Safe zone
+  -  **Yellow** — 70–99% · Near limit
+  -  **Red** — 100%+ · Over budget
+-  Month and year selector
 
 </details>
 
 <details>
-<summary><b>🔄 Recurring Transactions</b></summary>
+<summary><b> Recurring Transactions</b></summary>
 <br/>
 
-- 🗓️ Schedule **daily**, **weekly**, or **monthly** transactions
-- ⚙️ Auto-generated via **cron job** (runs at midnight)
-- 🔘 Enable / disable toggle per item
-- 📋 Full CRUD management
+- Schedule **daily**, **weekly**, or **monthly** transactions
+- Auto-generated via **cron job** (runs at midnight)
+-  Enable / disable toggle per item
+-  Full CRUD management
 
 </details>
 
 <details>
-<summary><b>📈 Analytics</b></summary>
+<summary><b> Analytics</b></summary>
 <br/>
 
-- 📉 6-month **area chart** — income vs expense cash flow
-- 📈 Monthly savings **line chart**
-- 🥧 Category **pie chart**
-- 📊 Horizontal **bar chart** by category
-- 📋 Category breakdown table with **percentage** analysis
+-  6-month **area chart** — income vs expense cash flow
+-  Monthly savings **line chart**
+-  Category **pie chart**
+-  Horizontal **bar chart** by category
+-  Category breakdown table with **percentage** analysis
 
 </details>
 
 <details>
-<summary><b>📤 Export & Reports</b></summary>
+<summary><b> Export & Reports</b></summary>
 <br/>
 
-- 📊 Export transactions to **CSV** (respects active filters)
-- 📄 Generate **monthly financial report** as HTML
-- ⬇️ **One-click PDF download** — no browser dialog — via html2pdf.js
-- 📅 Month & year selector for targeted reports
+-  Export transactions to **CSV** (respects active filters)
+-  Generate **monthly financial report** as HTML
+- **One-click PDF download** — no browser dialog — via html2pdf.js
+-  Month & year selector for targeted reports
 
 </details>
 
 <details>
-<summary><b>⚙️ Settings & Preferences</b></summary>
+<summary><b>Settings & Preferences</b></summary>
 <br/>
 
-- 👤 Update name, currency preference, monthly budget
-- 🌙 **Dark mode** toggle — persisted to database
-- 🔑 Change password securely
-- ❌ Delete account — cascades all user data
+-  Update name, currency preference, monthly budget
+-  **Dark mode** toggle — persisted to database
+-  Change password securely
+- Delete account — cascades all user data
 
 </details>
 
 <details>
-<summary><b>🌟 Bonus Features</b></summary>
+<summary><b> Bonus Features</b></summary>
 <br/>
 
-- 🌗 **Dark / Light mode** with smooth transition
-- 💱 **Multi-currency** support — USD, EUR, GBP, BDT, INR, and more
-- 📱 Fully **responsive** — mobile, tablet, and desktop
+-  **Dark / Light mode** with smooth transition
+-  **Multi-currency** support — USD, EUR, GBP, BDT, INR, and more
+-  Fully **responsive** — mobile, tablet, and desktop
 
 </details>
 
@@ -160,7 +160,7 @@
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology | Purpose |
 |:---:|:---:|:---:|
@@ -178,7 +178,7 @@
 
 ---
 
-## 🔑 Environment Variables
+## Environment Variables
 
 Create `server/.env` with the following:
 
@@ -211,7 +211,7 @@ GROQ_API_KEY=your_groq_api_key
 
 <div align="left">
 
-## 🚀 Deploy Troubleshooting (Render)
+## Deploy Troubleshooting (Render)
 
 > **If Render says "Deploy failed", verify these settings — they are the usual cause.**
 
@@ -223,7 +223,7 @@ GROQ_API_KEY=your_groq_api_key
 | **Health Check Path** | `/health` (aliases: `/`, `/healthz`, `/api/health`) |
 | **Node Version** | 20 (from `engines` in `server/package.json`) |
 
-Environment variables (Render → **Environment**) — `.env` is git-ignored, so
+Environment variables (Render **Environment**) — `.env` is git-ignored, so
 **every** value below must be set in the dashboard:
 
 ```env
@@ -241,7 +241,7 @@ GOOGLE_CLIENT_SECRET=...
 |---|---|
 | `Deploy failed: no open ports detected` | Was caused by the server only binding its port **after** MongoDB connected. Fixed: the port now opens immediately and Mongo is retried every 10s. |
 | `Deploy failed` + `Health check failed` | Fixed: `/health`, `/healthz` and `/api/health` always return **200**. |
-| Logs show `❌ MongoDB URI is missing` | `MONGO_URI` is not set in the Render dashboard — add it (the password must **not** keep Atlas's `< >` brackets). |
+| Logs show `MongoDB URI is missing` | `MONGO_URI` is not set in the Render dashboard — add it (the password must **not** keep Atlas's `< >` brackets). |
 | Logs show `MongoServerError: bad auth` | Wrong password, or `< >` left around it. |
 | `/health` returns `"database": "connecting"` | Atlas **Network Access** is blocking Render — allow `0.0.0.0/0` (or Render's static egress IPs). |
 | Build fails: `Could not read package.json` | **Root Directory** is wrong — set it to `prantonub/server`. |
@@ -254,16 +254,16 @@ GOOGLE_CLIENT_SECRET=...
 
 <div align="left">
 
-## 🔐 Google OAuth Setup
+## Google OAuth Setup
 
 | Step | Action |
 |:---:|---|
 | 1 | Go to [Google Cloud Console](https://console.cloud.google.com/) |
-| 2 | Create project → **APIs & Services** → **Credentials** |
-| 3 | Click **Create Credentials** → **OAuth 2.0 Client ID** |
+| 2 | Create project **APIs & Services** **Credentials** |
+| 3 | Click **Create Credentials** **OAuth 2.0 Client ID** |
 | 4 | Set type to **Web application** |
 | 5 | Add redirect URI: `http://localhost:5000/api/auth/google/callback` |
-| 6 | Copy **Client ID** + **Secret** → paste into `server/.env` |
+| 6 | Copy **Client ID** + **Secret** paste into `server/.env` |
 
 </div>
 
@@ -273,7 +273,7 @@ GOOGLE_CLIENT_SECRET=...
 
 <div align="left">
 
-## 📄 License
+## License
 
 This project was developed for **educational**, **personal learning**, and **assignment submission** purposes.
 
@@ -281,16 +281,16 @@ This project was developed for **educational**, **personal learning**, and **ass
 
 ━━━━━━━━━━━━━━━━━━━━━━━
 
-### 👨‍💻 Developed By
+### Developed By
 
 # Tauhidul Islam Pranto
 
-### ⚡ Powered by the MERN Stack
+### Powered by the MERN Stack
 
 `MongoDB` • `Express.js` • `React.js` • `Node.js`
 
 <br/>
 
-💡 *Transforming ideas into full-stack experiences.*
+ *Transforming ideas into full-stack experiences.*
 
 </div>

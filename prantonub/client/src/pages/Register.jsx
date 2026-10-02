@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { CheckCircle, Eye, EyeOff, Check } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
@@ -144,7 +145,10 @@ export default function Register() {
           {/* ── STEP: success ─────────────────────────────────────────────── */}
           {step === "success" && (
             <div className="text-center">
-              <div className="text-5xl mb-4">✅</div>
+              <CheckCircle
+                className="w-14 h-14 mx-auto mb-4 text-emerald-500"
+                aria-hidden="true"
+              />
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
                 Registration Successful!
               </h2>
@@ -228,7 +232,11 @@ export default function Register() {
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 text-lg"
                     >
-                      {showPassword ? "👁️" : "👁️‍🗨️"}
+                      {showPassword ? (
+                        <EyeOff className="w-4 h-4" aria-hidden="true" />
+                      ) : (
+                        <Eye className="w-4 h-4" aria-hidden="true" />
+                      )}
                     </button>
                   </div>
                   {form.password && (
@@ -271,7 +279,7 @@ export default function Register() {
                                 : "text-gray-400"
                             }
                           >
-                            ✓ {label}
+                            <Check className="w-3 h-3 inline" aria-hidden="true" /> {label}
                           </div>
                         ))}
                       </div>
@@ -298,7 +306,11 @@ export default function Register() {
                       onClick={() => setShowConfirm(!showConfirm)}
                       className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 text-lg"
                     >
-                      {showConfirm ? "👁️" : "👁️‍🗨️"}
+                      {showConfirm ? (
+                        <EyeOff className="w-4 h-4" aria-hidden="true" />
+                      ) : (
+                        <Eye className="w-4 h-4" aria-hidden="true" />
+                      )}
                     </button>
                   </div>
                 </div>

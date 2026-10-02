@@ -20,7 +20,7 @@ import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import Spinner from "../components/Spinner";
 import EmptyState from "../components/EmptyState";
-import { CATEGORY_ICONS, formatCurrency, MONTH_NAMES } from "../utils/helpers";
+import { formatCurrency, MONTH_NAMES } from "../utils/helpers";
 
 const COLORS = [
   "#7c3aed",

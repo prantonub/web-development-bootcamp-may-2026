@@ -20,7 +20,7 @@ router.put("/profile", updateProfile);
 router.put("/password", changePassword);
 router.delete("/account", deleteAccount);
 
-// NEW ROUTE → GET ALL USERS
+// NEW ROUTE -> GET ALL USERS
 router.get("/", async (req, res) => {
   try {
     const users = await User.find().select("-passwordHash");

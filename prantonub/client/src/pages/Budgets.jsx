@@ -5,7 +5,8 @@ import Modal from "../components/Modal";
 import ConfirmDialog from "../components/ConfirmDialog";
 import EmptyState from "../components/EmptyState";
 import Spinner from "../components/Spinner";
-import { CATEGORIES, CATEGORY_ICONS, formatCurrency } from "../utils/helpers";
+import { CATEGORIES, formatCurrency } from "../utils/helpers";
+import { X } from "lucide-react";
 
 const MONTHS = [
   "January",
@@ -49,7 +50,11 @@ function BudgetCard({ budget, currency, onDelete }) {
               {category}
             </p>
             <div className={`badge text-xs ${badge} flex items-center gap-1`}>
-              ● {statusText}
+              <span
+                className="w-1.5 h-1.5 rounded-full bg-current inline-block"
+                aria-hidden="true"
+              />
+              {statusText}
             </div>
           </div>
         </div>
@@ -57,7 +62,7 @@ function BudgetCard({ budget, currency, onDelete }) {
           onClick={onDelete}
           className="text-gray-300 hover:text-red-400 transition-colors p-1 text-lg"
         >
-          ✕
+          <X className="w-4 h-4" aria-hidden="true" />
         </button>
       </div>
       <div className="space-y-2">

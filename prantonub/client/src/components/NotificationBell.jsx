@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { Bell, Inbox, Check, X, ArrowRight } from "lucide-react";
+import NotificationIcon from "./NotificationIcon";
 import { notificationAPI } from "../api/notification";
 import { useToast } from "./Toast";
 
@@ -77,21 +79,6 @@ export default function NotificationBell() {
     }
   };
 
-  const getNotificationIcon = (type) => {
-    switch (type) {
-      case "budget_warning":
-        return "⚠️";
-      case "budget_exceeded":
-        return "🚨";
-      case "anomaly_detected":
-        return "🔍";
-      case "goal_achieved":
-        return "🎉";
-      default:
-        return "📢";
-    }
-  };
-
   return (
     <div className="relative">
       {/* Bell button */}
@@ -100,7 +87,7 @@ export default function NotificationBell() {
         className="relative p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-all active:scale-95 text-gray-700 dark:text-gray-300"
         aria-label="Notifications"
       >
-        <span className="text-xl">🔔</span>
+        <Bell className="w-5 h-5" aria-hidden="true" />
         {unreadCount > 0 && (
           <span className="absolute top-1 right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
             {unreadCount > 9 ? "9+" : unreadCount}
@@ -132,7 +119,10 @@ export default function NotificationBell() {
               <div className="p-4 text-center text-gray-500">Loading...</div>
             ) : notifications.length === 0 ? (
               <div className="p-8 text-center text-gray-500 dark:text-gray-400">
-                <span className="text-3xl mb-2 block">📭</span>
+                <Inbox
+                  className="w-8 h-8 mb-2 mx-auto"
+                  aria-hidden="true"
+                />
                 <p>No notifications yet</p>
               </div>
             ) : (
@@ -145,9 +135,10 @@ export default function NotificationBell() {
                 >
                   <div className="flex items-start gap-3">
                     {/* Icon */}
-                    <span className="text-lg flex-shrink-0">
-                      {getNotificationIcon(notification.type)}
-                    </span>
+                    <NotificationIcon
+                      type={notification.type}
+                      className="w-5 h-5 flex-shrink-0"
+                    />
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
@@ -178,7 +169,7 @@ export default function NotificationBell() {
                           className="text-blue-600 dark:text-blue-400 hover:text-blue-700 text-xs"
                           title="Mark as read"
                         >
-                          ✓
+                          <Check className="w-3.5 h-3.5" aria-hidden="true" />
                         </button>
                       )}
                       <button
@@ -186,7 +177,7 @@ export default function NotificationBell() {
                         className="text-red-500 hover:text-red-600 text-xs"
                         title="Delete"
                       >
-                        ✕
+                        <X className="w-3.5 h-3.5" aria-hidden="true" />
                       </button>
                     </div>
                   </div>
@@ -202,7 +193,10 @@ export default function NotificationBell() {
                 href="/notifications"
                 className="text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
               >
-                View all notifications →
+                <span className="inline-flex items-center gap-1">
+                  View all notifications
+                  <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
+                </span>
               </a>
             </div>
           )}

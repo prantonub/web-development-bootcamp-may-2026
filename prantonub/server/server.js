@@ -13,7 +13,7 @@ require("./src/config/cron");
 
 const app = express();
 
-// ✅ FIX: Tell Express to trust Render's reverse proxy.
+// FIX: Tell Express to trust Render's reverse proxy.
 // Without this, express-rate-limit throws ERR_ERL_UNEXPECTED_X_FORWARDED_FOR
 // and crashes every request before it even reaches your routes.
 app.set("trust proxy", 1);
@@ -81,7 +81,7 @@ const healthPayload = () => ({
 });
 
 app.get("/", (_req, res) =>
-  res.json({ success: true, message: "SpendWise API v2 🚀" }),
+  res.json({ success: true, message: "SpendWise API v2" }),
 );
 
 app.get(["/health", "/healthz", "/api/health"], (_req, res) =>
@@ -127,16 +127,16 @@ const describeMongoError = (err) => {
   if (/bad auth|authentication failed/i.test(msg)) {
     return [
       "MongoDB rejected the credentials (bad auth).",
-      `     → user: "${mongoTarget.user}" · password length: ${mongoTarget.pass.length} · host: "${mongoTarget.host}"`,
-      "     → If you copied the URI from Atlas, delete the < > brackets around the password.",
-      "     → Confirm the user exists in Atlas → Database Access and the password is current.",
-      "     → Percent-encode special characters in the password: @ : / ? # → %40 %3A %2F %3F %23",
+      `     -> user: "${mongoTarget.user}" · password length: ${mongoTarget.pass.length} · host: "${mongoTarget.host}"`,
+      "     -> If you copied the URI from Atlas, delete the < > brackets around the password.",
+      "     -> Confirm the user exists in Atlas -> Database Access and the password is current.",
+      "     -> Percent-encode special characters in the password: @ : / ? # -> %40 %3A %2F %3F %23",
     ].join("\n");
   }
   if (/querySrv|ENOTFOUND|EAI_AGAIN/i.test(msg)) {
     return [
       `Cannot resolve "${mongoTarget.host}" (DNS).`,
-      "     → Check the cluster hostname in MONGO_URI (Atlas → Connect → Drivers).",
+      "     -> Check the cluster hostname in MONGO_URI (Atlas -> Connect -> Drivers).",
     ].join("\n");
   }
   if (
@@ -146,7 +146,7 @@ const describeMongoError = (err) => {
   ) {
     return [
       "Atlas refused the network connection.",
-      "     → Atlas → Network Access → allow 0.0.0.0/0 (or this host's IP).",
+      "     -> Atlas -> Network Access -> allow 0.0.0.0/0 (or this host's IP).",
     ].join("\n");
   }
   return msg;
@@ -154,20 +154,20 @@ const describeMongoError = (err) => {
 
 if (!MONGO_URI) {
   console.error(
-    "❌ MongoDB URI is missing. Set MONGO_URI in your environment (see server/.env.example).",
+    "[ERROR] MongoDB URI is missing. Set MONGO_URI in your environment (see server/.env.example).",
   );
 } else {
   console.log(
-    `📡 Environment: MONGO_URI=${process.env.MONGO_URI ? "set" : "unset"} · MONGODB_URI=${process.env.MONGODB_URI ? "set" : "unset"}`,
+    `[ENV] Environment: MONGO_URI=${process.env.MONGO_URI ? "set" : "unset"} · MONGODB_URI=${process.env.MONGODB_URI ? "set" : "unset"}`,
   );
   console.log(
-    `📡 MongoDB target → user="${mongoTarget.user}" · host="${mongoTarget.host}" · db="${mongoTarget.db || "(default)"}"`,
+    `[ENV] MongoDB target -> user="${mongoTarget.user}" · host="${mongoTarget.host}" · db="${mongoTarget.db || "(default)"}"`,
   );
 
   // The #1 copy-paste mistake: Atlas displays the password as <password>.
   if (/[<>]/.test(MONGO_URI)) {
     console.error(
-      "❌ MONGO_URI contains < or > — remove the angle brackets around the password.",
+      "[ERROR] MONGO_URI contains < or > — remove the angle brackets around the password.",
     );
   }
 }
@@ -184,7 +184,7 @@ const connectDB = async () => {
     // never reaches this fallback.
     if (/querySrv/i.test(err.message)) {
       console.warn(
-        "⚠️ DNS SRV lookup failed — retrying with public DNS resolvers (8.8.8.8 / 1.1.1.1)...",
+        "[WARN] DNS SRV lookup failed — retrying with public DNS resolvers (8.8.8.8 / 1.1.1.1)...",
       );
       dns.setServers(["8.8.8.8", "1.1.1.1"]);
       await mongoose.connect(MONGO_URI, options);
@@ -198,23 +198,23 @@ const connectDB = async () => {
 // Render marks a deploy as failed when no port opens in time or when the
 // process exits, so a database problem must never stop the API from starting.
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server → http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`[START] Server -> http://localhost:${PORT}`));
 
 // Retry with exponential backoff so a persistent misconfiguration does not spam
-// the logs every 10 seconds forever (10s → 20s → 40s → 60s cap).
+// the logs every 10 seconds forever (10s -> 20s -> 40s -> 60s cap).
 const connectWithRetry = async (attempt = 1) => {
   if (!MONGO_URI) return;
 
   try {
     await connectDB();
-    console.log("✅ MongoDB connected");
+    console.log("[OK] MongoDB connected");
   } catch (err) {
     console.error(
-      `❌ MongoDB connection attempt ${attempt} failed:\n${describeMongoError(err)}`,
+      `[ERROR] MongoDB connection attempt ${attempt} failed:\n${describeMongoError(err)}`,
     );
     const delay = Math.min(10000 * 2 ** (attempt - 1), 60000);
     console.warn(
-      `⚠️ API still listening on port ${PORT} — retrying in ${delay / 1000}s.`,
+      `[WARN] API still listening on port ${PORT} — retrying in ${delay / 1000}s.`,
     );
     setTimeout(() => connectWithRetry(attempt + 1), delay);
   }

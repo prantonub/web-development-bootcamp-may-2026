@@ -14,7 +14,7 @@ const googleConfigured =
 if (googleConfigured) {
   if (!process.env.SERVER_URL) {
     console.warn(
-      "⚠️ SERVER_URL is not set — the Google OAuth callback URL will be wrong. " +
+      "[WARN] SERVER_URL is not set — the Google OAuth callback URL will be wrong. " +
         "Set it to this backend's public URL (e.g. https://your-app.onrender.com).",
     );
   }
@@ -62,7 +62,7 @@ if (googleConfigured) {
   );
 } else {
   console.warn(
-    "⚠️ Google OAuth disabled — GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET are not set.",
+    "[WARN] Google OAuth disabled — GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET are not set.",
   );
 }
 

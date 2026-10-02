@@ -4,10 +4,10 @@
  * Renders a single chat message bubble.
  * Supports user messages (right-aligned) and AI messages (left-aligned).
  * Parses markdown: **bold**, bullet points, numbered lists, headers, line breaks.
- * ✅ XSS-safe: no dangerouslySetInnerHTML — uses React elements instead.
+ * XSS-safe: no dangerouslySetInnerHTML - uses React elements instead.
  */
 
-// ✅ Safely parse bold **text** without dangerouslySetInnerHTML
+// Safely parse bold **text** without dangerouslySetInnerHTML
 const parseBold = (text) => {
   const parts = text.split(/\*\*(.*?)\*\*/g);
   return parts.map((part, i) =>
@@ -27,7 +27,7 @@ const formatText = (text) => {
   return lines.map((line, i) => {
     const trimmed = line.trim();
 
-    // Empty line → small spacer
+    // Empty line - small spacer
     if (trimmed === "") return <div key={i} className="h-2" />;
 
     // Bullet point — starts with - or •
